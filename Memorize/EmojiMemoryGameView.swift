@@ -8,7 +8,7 @@
 import SwiftUI
 
 //Main struc where call all other func views we need
-struct ContentView: View {
+struct EmojiMemoryGameView: View {
     @State var emojis =  emojisCollections(theme: .noone)
     @State var maxCard = 0
     @State var themeColorCard = themeColorCards(theme: .noone)
@@ -174,5 +174,5 @@ enum Theme {
 }
 
 #Preview {
-    ContentView()
+    EmojiMemoryGameView()
 }
