@@ -40,7 +40,9 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
                         cards[chosenIndex].isMatched = true
                         cards[potentialMatchIndex].isMatched = true
                     }
-                    updateEarnScore(newScore: newScore, isMatched: cards[potentialMatchIndex].isMatched)
+                    updateEarnScore(isMatched: cards[potentialMatchIndex].isMatched, choosePreviousSeen: cards[chosenIndex].previouslySeen, potencialChoosePreviousSeen: cards[potentialMatchIndex].previouslySeen)
+                    cards[chosenIndex].previouslySeen = true
+                    cards[potentialMatchIndex].previouslySeen = true
                 } else {
                     indexOfTheOnlyFaceUpCard = chosenIndex
                 }
@@ -49,13 +51,14 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
         }
     }
     //Func for updating the score
-    private mutating func updateEarnScore(newScore: Int, isMatched: Bool) {
-        self.newScore += (isMatched ? 2 : -1)
+    private mutating func updateEarnScore(isMatched: Bool, choosePreviousSeen: Bool, potencialChoosePreviousSeen: Bool) {
+        self.newScore += isMatched ? 2 : (choosePreviousSeen || potencialChoosePreviousSeen ? -1 : 0)
     }
     //Main struct for cards,
     struct Card: Equatable, Identifiable{
         var isFaceUp = false
         var isMatched = false
+        var previouslySeen = false
         let content: CardContent
         var id: String
     }
