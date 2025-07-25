@@ -62,8 +62,6 @@ class EmojiMemoryGame: ObservableObject {
     func shuffle() {
         model.shuffle()
     }
-
-
     //Var for score
     public var newScore = 0
     
@@ -73,19 +71,3 @@ class EmojiMemoryGame: ObservableObject {
         newScore = model.newScore
     }
 }
-
-/*
-class EmojiMemoryGameViewModel: ObservableObject {
-    private var timerLogic = MemoryGame1()
-
-    @Published var formattedTime: String = "00.00"
-
-    func startTimer() {
-        timerLogic.timerStart { [weak self] newTime in
-            DispatchQueue.main.async {
-                self?.formattedTime = newTime
-            }
-        }
-    }
-}
-*/
