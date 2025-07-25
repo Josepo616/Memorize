@@ -8,15 +8,12 @@
 import Foundation
 //Main struct for our game and changes on it
 struct MemoryGame<CardContent> where CardContent: Equatable{
-    //initialization of the game, empty at the beginning; actual game should be created using the button in the UI
-    private(set) var cards: Array<Card>
-    var firstCardChoosed: Bool = false
     //Var for score
     var newScore = 0
-    //Var for timer
-    var elapsedSeconds: Int = 0
-    private var timer: Timer?
-
+    //Var for track if the game over
+    var isGameOver = false
+    //Initialization of the game, empty at the beginning; actual game should be created using the button in the UI
+    private(set) var cards: Array<Card>
     init(numberOfPairOfCards: Int, cardContentFactory: (Int) -> CardContent){
         cards = []
         if(numberOfPairOfCards > 0){
@@ -38,17 +35,20 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
     }
     //Compare the first two face up cards, if they are equal mark the bools true and update the score
     mutating func choose(_ card: Card){
+        //Search the index of the selected card
         if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }){
-            if !firstCardChoosed{
-                firstCardChoosed = true
-            }
+            //Verify the card is not flipped or paired
             if !cards[chosenIndex].isFaceUp && !cards[chosenIndex].isMatched{
+                //Check if there is a single card face up (potential pair)
                 if let potentialMatchIndex = indexOfTheOnlyFaceUpCard{
+                    //Compare the contents to see if there is a match
                     if cards[potentialMatchIndex].content == cards[chosenIndex].content{
                         cards[chosenIndex].isMatched = true
                         cards[potentialMatchIndex].isMatched = true
                     }
+                    //Call the func to update the score, considering all posibilities like previous seen for rest, or there is a match for sum
                     updateEarnScore(isMatched: cards[potentialMatchIndex].isMatched, choosePreviousSeen: cards[chosenIndex].previouslySeen, potencialChoosePreviousSeen: cards[potentialMatchIndex].previouslySeen)
+                    //Updated or not, mark both as previous seen
                     cards[chosenIndex].previouslySeen = true
                     cards[potentialMatchIndex].previouslySeen = true
                 } else {
@@ -56,6 +56,10 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
                 }
                 cards[chosenIndex].isFaceUp = true
             }
+        }
+        //Special func to check is the array and all his indexes meets a specific condition
+        if cards.allSatisfy(\.isMatched) {
+            isGameOver = true
         }
     }
     //Func for updating the score
@@ -70,8 +74,8 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
         let content: CardContent
         var id: String
     }
-
 }
+
 //We create a enum data type for the array of emojis, the theme of the cards, descriptions/label Title and the number of pairs
 enum Theme {
     case halloween
@@ -128,6 +132,7 @@ enum Theme {
         }
     }
 }
+//Returns the single element if the array has exactly one; otherwise, nil
 extension Array{
     var only: Element? {
          count == 1 ? first : nil

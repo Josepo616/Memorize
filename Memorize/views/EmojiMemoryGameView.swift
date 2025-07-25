@@ -11,7 +11,6 @@ import SwiftUI
 struct EmojiMemoryGameView: View {
     //Definition of observed object for viewModel
     @ObservedObject var viewModel: EmojiMemoryGame
-
     //Main view where we call all views of func we need
     var body: some View {
         //HStack for titles
@@ -27,12 +26,16 @@ struct EmojiMemoryGameView: View {
             }
             .foregroundColor(viewModel.themeColorCards(theme: EmojiMemoryGame.randomTheme))
             Spacer()
+            //Text for the timer
+            Text(viewModel.formattedTime)
             //Score description and button for start new games
             Text("Your current score is: \(viewModel.newScore)")
             Spacer()
+            //Button to create a game, shuffle all cards, and reset the timer
             Button("New Game") {
                 viewModel.createNewGame()
                 viewModel.shuffle()
+                viewModel.resetTimer()
             }
         }
         .imageScale(.small)
@@ -46,8 +49,10 @@ struct EmojiMemoryGameView: View {
                 CardView(card)
                     .aspectRatio(2/3, contentMode: .fit)
                     .padding(4)
+                    //Gesture for tapping and flip a card, and call the func to start the timer
                     .onTapGesture {
                         viewModel.choose(card)
+                        viewModel.startTimer()
                     }
             }
         }
@@ -80,7 +85,6 @@ struct CardView: View {
         .opacity(card.isFaceUp || !card.isMatched ? 1 : 0)
     }
 }
-
 #Preview {
     EmojiMemoryGameView(viewModel: EmojiMemoryGame())
 }
