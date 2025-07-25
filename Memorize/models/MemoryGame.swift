@@ -10,8 +10,13 @@ import Foundation
 struct MemoryGame<CardContent> where CardContent: Equatable{
     //initialization of the game, empty at the beginning; actual game should be created using the button in the UI
     private(set) var cards: Array<Card>
+    var firstCardChoosed: Bool = false
     //Var for score
     var newScore = 0
+    //Var for timer
+    var elapsedSeconds: Int = 0
+    private var timer: Timer?
+
     init(numberOfPairOfCards: Int, cardContentFactory: (Int) -> CardContent){
         cards = []
         if(numberOfPairOfCards > 0){
@@ -34,6 +39,9 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
     //Compare the first two face up cards, if they are equal mark the bools true and update the score
     mutating func choose(_ card: Card){
         if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }){
+            if !firstCardChoosed{
+                firstCardChoosed = true
+            }
             if !cards[chosenIndex].isFaceUp && !cards[chosenIndex].isMatched{
                 if let potentialMatchIndex = indexOfTheOnlyFaceUpCard{
                     if cards[potentialMatchIndex].content == cards[chosenIndex].content{
@@ -62,6 +70,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
         let content: CardContent
         var id: String
     }
+
 }
 //We create a enum data type for the array of emojis, the theme of the cards, descriptions/label Title and the number of pairs
 enum Theme {
@@ -109,12 +118,12 @@ enum Theme {
     }
     var numberOfPair: Int {
         switch self {
-        case .halloween: return Int.random(in: 1...emojiElements.count)
+        case .halloween: return emojiElements.count
         case .cars: return Int.random(in: 1...emojiElements.count)
-        case .animals: return Int.random(in: 1...emojiElements.count)
+        case .animals: return emojiElements.count
         case .sports: return Int.random(in: 1...emojiElements.count)
         case .flags: return Int.random(in: 1...emojiElements.count)
-        case .food: return Int.random(in: 1...emojiElements.count)
+        case .food: return emojiElements.count
         case .noone: return 0
         }
     }

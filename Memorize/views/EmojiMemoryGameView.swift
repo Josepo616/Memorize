@@ -11,7 +11,7 @@ import SwiftUI
 struct EmojiMemoryGameView: View {
     //Definition of observed object for viewModel
     @ObservedObject var viewModel: EmojiMemoryGame
-    
+
     //Main view where we call all views of func we need
     var body: some View {
         //HStack for titles

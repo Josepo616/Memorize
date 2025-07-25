@@ -62,11 +62,30 @@ class EmojiMemoryGame: ObservableObject {
     func shuffle() {
         model.shuffle()
     }
+
+
     //Var for score
     public var newScore = 0
+    
     //Func for a selected card an listens for changes
     func choose(_ card: MemoryGame<String>.Card) {
         model.choose(card)
         newScore = model.newScore
     }
 }
+
+/*
+class EmojiMemoryGameViewModel: ObservableObject {
+    private var timerLogic = MemoryGame1()
+
+    @Published var formattedTime: String = "00.00"
+
+    func startTimer() {
+        timerLogic.timerStart { [weak self] newTime in
+            DispatchQueue.main.async {
+                self?.formattedTime = newTime
+            }
+        }
+    }
+}
+*/
