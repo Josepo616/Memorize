@@ -4,16 +4,30 @@
 //
 //  Created by JoseAlvarez on 7/22/25.
 //
-
 import Foundation
-//Main struct for our game and changes on it
+/// A generic memory game model where the content of the cards can be any `Equatable` type.
+///
+/// This struct manages the state and logic of a memory card-matching game, including card flipping,
+/// score tracking, and game over detection.
+///
+/// - Type Parameters:
+///   - CardContent: The type of content shown on the cards. Must conform to `Equatable`.
 struct MemoryGame<CardContent> where CardContent: Equatable{
-    //Var for score
-    var newScore = 0
-    //Var for track if the game over
-    var isGameOver = false
-    //Initialization of the game, empty at the beginning; actual game should be created using the button in the UI
     private(set) var cards: Array<Card>
+    var newScore = 0
+    var isGameOver = false
+    var indexOfTheOnlyFaceUpCard: Int?{
+        get { return cards.indices.filter{index in cards[index].isFaceUp}.only }
+        set { cards.indices.forEach { cards[$0].isFaceUp = (newValue == $0) } }
+    }
+    // MARK: - Initialization
+    /// Creates a new memory game with a given number of card pairs and a content factory.
+    ///
+    /// - Parameters:
+    ///   - numberOfPairOfCards: The number of card pairs in the game (minimum of 2 enforced).
+    ///   - cardContentFactory: A closure that provides the content for each card pair based on its index.
+    ///
+    /// For each pair, two cards with identical content but unique IDs are created.
     init(numberOfPairOfCards: Int, cardContentFactory: (Int) -> CardContent){
         cards = []
         if(numberOfPairOfCards > 0){
@@ -24,31 +38,33 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
             }
         }
     }
-    //Get the index of the current face up card
-    var indexOfTheOnlyFaceUpCard: Int?{
-        get { return cards.indices.filter{index in cards[index].isFaceUp}.only }
-        set { cards.indices.forEach { cards[$0].isFaceUp = (newValue == $0) } }
-    }
-    //Shuffle the array of cards
     mutating func shuffle() {
         cards.shuffle()
     }
-    //Compare the first two face up cards, if they are equal mark the bools true and update the score
+    /// function that works with the actual card selected
+    ///// Handles the logic when a card is selected by the user.
+    ///
+    /// - Parameters:
+    ///   - card: The card that was tapped.
+    ///
+    /// This function:
+    /// - Finds the selected card by ID.
+    /// - Ignores the selection if the card is already face up or matched.
+    /// - If there is another card already face up, it checks for a match:
+    ///   - If they match, marks both as matched.
+    ///   - Updates the score based on match status and whether cards were seen before.
+    /// - Marks the selected cards as previously seen.
+    /// - If no other card is face up, it sets the current one as the only face-up card.
+    /// - Ends the game if all cards are matched.
     mutating func choose(_ card: Card){
-        //Search the index of the selected card
         if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }){
-            //Verify the card is not flipped or paired
             if !cards[chosenIndex].isFaceUp && !cards[chosenIndex].isMatched{
-                //Check if there is a single card face up (potential pair)
                 if let potentialMatchIndex = indexOfTheOnlyFaceUpCard{
-                    //Compare the contents to see if there is a match
                     if cards[potentialMatchIndex].content == cards[chosenIndex].content{
                         cards[chosenIndex].isMatched = true
                         cards[potentialMatchIndex].isMatched = true
                     }
-                    //Call the func to update the score, considering all posibilities like previous seen for rest, or there is a match for sum
                     updateEarnScore(isMatched: cards[potentialMatchIndex].isMatched, choosePreviousSeen: cards[chosenIndex].previouslySeen, potencialChoosePreviousSeen: cards[potentialMatchIndex].previouslySeen)
-                    //Updated or not, mark both as previous seen
                     cards[chosenIndex].previouslySeen = true
                     cards[potentialMatchIndex].previouslySeen = true
                 } else {
@@ -57,16 +73,13 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
                 cards[chosenIndex].isFaceUp = true
             }
         }
-        //Special func to check is the array and all his indexes meets a specific condition
         if cards.allSatisfy(\.isMatched) {
             isGameOver = true
         }
     }
-    //Func for updating the score
     private mutating func updateEarnScore(isMatched: Bool, choosePreviousSeen: Bool, potencialChoosePreviousSeen: Bool) {
         self.newScore += isMatched ? 2 : (choosePreviousSeen || potencialChoosePreviousSeen ? -1 : 0)
     }
-    //Main struct for cards,
     struct Card: Equatable, Identifiable{
         var isFaceUp = false
         var isMatched = false
@@ -75,8 +88,13 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
         var id: String
     }
 }
-
-//We create a enum data type for the array of emojis, the theme of the cards, descriptions/label Title and the number of pairs
+/// Represents the available themes for the memory game.
+///
+/// Each theme defines:
+/// - A set of emojis (`emojiElements`) specific to the theme.
+/// - A color identifier (`colorTheme`) used for styling.
+/// - A user-friendly description (`description`).
+/// - A logic for determining the number of pairs (`numberOfPair`).
 enum Theme {
     case halloween
     case cars
@@ -85,6 +103,8 @@ enum Theme {
     case flags
     case food
     case noone
+    // MARK: - Theme Color
+    /// The color name associated with the theme, used for UI styling.
     var colorTheme: String{
      switch self {
         case .halloween: return "halloween"
@@ -96,6 +116,8 @@ enum Theme {
         case .noone: return "black"
         }
     }
+    // MARK: - Description
+    /// A user-friendly string describing the current theme.
     var description: String {
         switch self {
         case .halloween: return "Your're playing: Halloween theme"
@@ -107,6 +129,8 @@ enum Theme {
         case .noone: return "You're not playing a theme"
         }
     }
+    // MARK: - Emoji Content
+    /// A shuffled array of emoji strings associated with the theme.
     var emojiElements: [String] {
         var emojiElementsShuffled: [String]
         switch self {
@@ -120,6 +144,10 @@ enum Theme {
         }
         return emojiElementsShuffled.shuffled()
     }
+    // MARK: - Game Logic
+    /// The number of emoji pairs to be used in the game for the selected theme.
+    ///
+    /// Some themes return all available emojis, while others (like `cars`, `sports`, or `flags`) return a random count.
     var numberOfPair: Int {
         switch self {
         case .halloween: return emojiElements.count
@@ -132,7 +160,6 @@ enum Theme {
         }
     }
 }
-//Returns the single element if the array has exactly one; otherwise, nil
 extension Array{
     var only: Element? {
          count == 1 ? first : nil

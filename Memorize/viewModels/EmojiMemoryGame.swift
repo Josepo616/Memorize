@@ -4,24 +4,29 @@
 //
 //  Created by JoseAlvarez on 7/22/25.
 //
-
 import SwiftUI
-
-//Class for the observable object - our viewModel
+/// ViewModel for the Emoji Memory Game.
+///
+/// This class serves as the bridge between the view (`EmojiMemoryGameView`) and the game model (`MemoryGame`).
+/// It manages the game's theme, score, timing logic, and user interactions, and notifies the UI of changes.
+///
+/// - Conforms to: `ObservableObject`
+/// - Publishes:
+///   - `formattedTime`: Formatted string of the elapsed game time.
+///   - Internal model updates via `@Published` game state.
 class EmojiMemoryGame: ObservableObject {
-    //Set no theme at starting the app
-    static var themes: [Theme] = [.noone]
-    private(set) static var randomTheme: Theme = themes.randomElement()!
-    //Get the array for cards with the random theme selected
-    static var emojis = randomTheme.emojiElements
-    //Public var to be listened to in the view
     @Published var formattedTime: String = "00:00"
-    //Var type Timer, and initialization of the counter of seconds
+    @Published private var model  = createMemoryGame()
+    private(set) static var randomTheme: Theme = themes.randomElement()!
     private var timer: Timer?
     private var elapsedSeconds = 0
-    //Var for track the state if the game alredy started
     private var isGameStarted = false
-    //Func for the creation at the beginning, should start empty
+    public var newScore = 0
+    static var themes: [Theme] = [.noone]
+    static var emojis = randomTheme.emojiElements
+    var cards: [MemoryGame<String>.Card] {
+        return model.cards
+    }
     static func createMemoryGame() -> MemoryGame<String> {
         return MemoryGame(numberOfPairOfCards: randomTheme.numberOfPair) { pairIndex in
             if emojis.indices.contains(pairIndex) {
@@ -31,7 +36,6 @@ class EmojiMemoryGame: ObservableObject {
             }
         }
     }
-    //Func for mapping the colors for cards, considering theme selected
     func themeColorCards(theme: Theme) -> Color{
         let map: [String: Color] = [
             "halloween": .halloween,
@@ -44,19 +48,10 @@ class EmojiMemoryGame: ObservableObject {
         ]
         return map[theme.colorTheme, default: .black]
     }
-    //Publish the model so view can observe changes
-    @Published private var model  = createMemoryGame()
-    //Return the whole array of cards
-    var cards: [MemoryGame<String>.Card] {
-        return model.cards
-    }
-    //Create a new game with the button in the view
     func createNewGame() {
-        //Add all possible themes, get a random one and get the array for pass to the emojis var
         EmojiMemoryGame.themes = [.halloween, .cars, .animals, .sports, .flags, .food]
         EmojiMemoryGame.randomTheme = EmojiMemoryGame.themes.randomElement()!
         EmojiMemoryGame.emojis = EmojiMemoryGame.randomTheme.emojiElements
-        //Creation of the new game with a random theme and random amount of cards
         model = .init(numberOfPairOfCards: EmojiMemoryGame.randomTheme.numberOfPair) { pairIndex in
             if EmojiMemoryGame.emojis.indices.contains(pairIndex) {
                 return EmojiMemoryGame.emojis[pairIndex]
@@ -65,29 +60,31 @@ class EmojiMemoryGame: ObservableObject {
             }
         }
     }
-    //Func for shuffle the array
     func shuffle() {
         model.shuffle()
     }
-    //Var for score
-    public var newScore = 0
-    //Func for a selected card an listens for changes
+    // MARK: - Card Selection
+    /// Handles the logic when a card is selected by the user.
+    ///
+    /// - Parameter card: The card that was tapped.
+    ///
+    /// Updates the score, checks for game end, and interacts with the timer.
     func choose(_ card: MemoryGame<String>.Card) {
         model.choose(card)
         newScore = model.newScore
-        //DispatchQueue to wait and observe changes in the model, then execute actions
         DispatchQueue.main.async {
-            //Pause the timer is the game is over
             if self.model.isGameOver == true {
                 self.pauseTimer()
             }
         }
-        //call the func for earn points based in the time that takes the user
         if model.isGameOver == true {
             self.earnPoints()
         }
     }
-    //Func for starting the timer with interval of 1, and add that second to the elapsed var, at the same time formatt the time in a string understandable
+    // MARK: - Timer Management
+    /// Starts the game timer if not already running.
+    ///
+    /// Increments `elapsedSeconds` every second and updates the formatted time string.
     func startTimer() {
             guard timer == nil else { return }
             timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
@@ -96,18 +93,19 @@ class EmojiMemoryGame: ObservableObject {
                 self.formattedTime = String(format: "%02d:%02d", self.elapsedSeconds / 60, self.elapsedSeconds % 60)
             }
         }
-    //Func for stop the timer
     func pauseTimer() {
         timer?.invalidate()
         timer = nil
     }
-    //Func for reset the timer, and reassing all var we used before
     func resetTimer() {
         pauseTimer()
         elapsedSeconds = 0
         formattedTime = "00:00"
     }
-    //Func for the earn of point based in how much time the user takes
+    // MARK: - Scoring Logic
+    /// Adjusts the score based on how quickly the game was completed.
+    ///
+    /// Rewards fast completion with more points and penalizes slower times.
     func earnPoints() {
     switch elapsedSeconds {
         case 0..<10: newScore += 30; break
