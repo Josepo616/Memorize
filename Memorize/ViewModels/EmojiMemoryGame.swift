@@ -14,6 +14,7 @@ import SwiftUI
 /// - Publishes:
 ///   - `formattedTime`: Formatted string of the elapsed game time.
 ///   - Internal model updates via `@Published` game state.
+
 class EmojiMemoryGame: ObservableObject {
     @Published var formattedTime: String = "00:00"
     @Published private var model  = createMemoryGame()
@@ -22,11 +23,12 @@ class EmojiMemoryGame: ObservableObject {
     private var elapsedSeconds = 0
     private var isGameStarted = false
     public var newScore = 0
-    static var themes: [Theme] = [.noone]
-    static var emojis = randomTheme.emojiElements
+    static var themes: [Theme] = [.empty]
+    static var emojis = randomTheme.emojiElements.shuffled()
     var cards: [MemoryGame<String>.Card] {
         return model.cards
     }
+    
     static func createMemoryGame() -> MemoryGame<String> {
         return MemoryGame(numberOfPairOfCards: randomTheme.numberOfPair) { pairIndex in
             if emojis.indices.contains(pairIndex) {
@@ -36,6 +38,7 @@ class EmojiMemoryGame: ObservableObject {
             }
         }
     }
+    
     func themeColorCards(theme: Theme) -> Color{
         let map: [String: Color] = [
             "halloween": .halloween,
@@ -48,6 +51,7 @@ class EmojiMemoryGame: ObservableObject {
         ]
         return map[theme.colorTheme, default: .black]
     }
+    
     func createNewGame() {
         EmojiMemoryGame.themes = [.halloween, .cars, .animals, .sports, .flags, .food]
         EmojiMemoryGame.randomTheme = EmojiMemoryGame.themes.randomElement()!
@@ -60,6 +64,7 @@ class EmojiMemoryGame: ObservableObject {
             }
         }
     }
+    
     func shuffle() {
         model.shuffle()
     }
@@ -69,6 +74,7 @@ class EmojiMemoryGame: ObservableObject {
     /// - Parameter card: The card that was tapped.
     ///
     /// Updates the score, checks for game end, and interacts with the timer.
+    
     func choose(_ card: MemoryGame<String>.Card) {
         model.choose(card)
         newScore = model.newScore
@@ -85,42 +91,72 @@ class EmojiMemoryGame: ObservableObject {
     /// Starts the game timer if not already running.
     ///
     /// Increments `elapsedSeconds` every second and updates the formatted time string.
+    
     func startTimer() {
-            guard timer == nil else { return }
-            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-                guard let self = self else { return }
-                self.elapsedSeconds += 1
-                self.formattedTime = String(format: "%02d:%02d", self.elapsedSeconds / 60, self.elapsedSeconds % 60)
-            }
+        guard timer == nil else { return }
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.elapsedSeconds += 1
+            self.formattedTime = String(format: "%02d:%02d", self.elapsedSeconds / 60, self.elapsedSeconds % 60)
         }
+    }
+    
     func pauseTimer() {
         timer?.invalidate()
         timer = nil
     }
-    func resetTimer() {
+    
+    func resetTimerAndScore() {
         pauseTimer()
         elapsedSeconds = 0
         formattedTime = "00:00"
+        newScore = 0
     }
     // MARK: - Scoring Logic
     /// Adjusts the score based on how quickly the game was completed.
     ///
     /// Rewards fast completion with more points and penalizes slower times.
+    
     func earnPoints() {
-    switch elapsedSeconds {
-        case 0..<10: newScore += 30; break
-        case 10..<20: newScore += 20; break
-        case 20..<30: newScore += 10; break
-        case 30..<40: newScore += 5; break
-        case 40..<50: newScore += 2; break
-        case 50..<60: newScore += 1; break
-        case 60..<70: newScore -= 1; break
-        case 70..<80: newScore -= 2; break
-        case 80..<90: newScore -= 5; break
-        case 90..<100 :newScore -= 10; break
-        case 100..<110: newScore -= 20; break
-        case 110..<120: newScore -= 30; break
-        default: break
+        switch elapsedSeconds {
+        case 0..<10:
+            newScore += 30;
+            break
+        case 10..<20:
+            newScore += 20;
+            break
+        case 20..<30:
+            newScore += 10;
+            break
+        case 30..<40:
+            newScore += 5;
+            break
+        case 40..<50:
+            newScore += 2;
+            break
+        case 50..<60:
+            newScore += 1;
+            break
+        case 60..<70:
+            newScore -= 1;
+            break
+        case 70..<80:
+            newScore -= 2;
+            break
+        case 80..<90:
+            newScore -= 5;
+            break
+        case 90..<100 :
+            newScore -= 10;
+            break
+        case 100..<110:
+            newScore -= 20;
+            break
+        case 110..<120:
+            newScore -= 30;
+            break
+        default:
+            break
         }
     }
 }

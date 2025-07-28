@@ -12,7 +12,8 @@ import Foundation
 ///
 /// - Type Parameters:
 ///   - CardContent: The type of content shown on the cards. Must conform to `Equatable`.
-struct MemoryGame<CardContent> where CardContent: Equatable{
+
+struct MemoryGame<CardContent> where CardContent: Equatable {
     private(set) var cards: Array<Card>
     var newScore = 0
     var isGameOver = false
@@ -28,6 +29,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
     ///   - cardContentFactory: A closure that provides the content for each card pair based on its index.
     ///
     /// For each pair, two cards with identical content but unique IDs are created.
+    
     init(numberOfPairOfCards: Int, cardContentFactory: (Int) -> CardContent){
         cards = []
         if(numberOfPairOfCards > 0){
@@ -38,9 +40,11 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
             }
         }
     }
+    
     mutating func shuffle() {
         cards.shuffle()
     }
+    
     /// function that works with the actual card selected
     ///// Handles the logic when a card is selected by the user.
     ///
@@ -56,6 +60,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
     /// - Marks the selected cards as previously seen.
     /// - If no other card is face up, it sets the current one as the only face-up card.
     /// - Ends the game if all cards are matched.
+    
     mutating func choose(_ card: Card){
         if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }){
             if !cards[chosenIndex].isFaceUp && !cards[chosenIndex].isMatched{
@@ -77,9 +82,11 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
             isGameOver = true
         }
     }
+    
     private mutating func updateEarnScore(isMatched: Bool, choosePreviousSeen: Bool, potencialChoosePreviousSeen: Bool) {
         self.newScore += isMatched ? 2 : (choosePreviousSeen || potencialChoosePreviousSeen ? -1 : 0)
     }
+    
     struct Card: Equatable, Identifiable{
         var isFaceUp = false
         var isMatched = false
@@ -95,6 +102,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
 /// - A color identifier (`colorTheme`) used for styling.
 /// - A user-friendly description (`description`).
 /// - A logic for determining the number of pairs (`numberOfPair`).
+
 enum Theme {
     case halloween
     case cars
@@ -102,64 +110,87 @@ enum Theme {
     case sports
     case flags
     case food
-    case noone
+    case empty
     // MARK: - Theme Color
     /// The color name associated with the theme, used for UI styling.
+    
     var colorTheme: String{
      switch self {
-        case .halloween: return "halloween"
-        case .cars:  return "gray"
-        case .animals: return "animal"
-        case .sports: return "red"
-        case .flags: return "blue"
-        case .food: return "yellow"
-        case .noone: return "black"
+        case .halloween: 
+         return "halloween"
+        case .cars:  
+         return "gray"
+        case .animals: 
+         return "animal"
+        case .sports: 
+         return "red"
+        case .flags:
+         return "blue"
+        case .food: 
+         return "yellow"
+        case .empty:
+         return "black"
         }
     }
     // MARK: - Description
     /// A user-friendly string describing the current theme.
+    
     var description: String {
         switch self {
-        case .halloween: return "Your're playing: Halloween theme"
-        case .cars: return "Your're playing: Cars theme"
-        case .animals: return "You're playing: Animals theme"
-        case .sports: return "You're playing: Sports theme"
-        case .flags: return "You're playing: Flags theme"
-        case .food: return "You're playing: Food theme"
-        case .noone: return "You're not playing a theme"
+        case .halloween: 
+            return "Your're playing: Halloween theme"
+        case .cars: 
+            return "Your're playing: Cars theme"
+        case .animals: 
+            return "You're playing: Animals theme"
+        case .sports: 
+            return "You're playing: Sports theme"
+        case .flags: 
+            return "You're playing: Flags theme"
+        case .food: 
+            return "You're playing: Food theme"
+        case .empty:
+            return "You're not playing a theme"
         }
     }
     // MARK: - Emoji Content
     /// A shuffled array of emoji strings associated with the theme.
+    
     var emojiElements: [String] {
-        var emojiElementsShuffled: [String]
         switch self {
-        case .halloween: emojiElementsShuffled = ["🎃", "👻", "🧛‍♂️", "👽", "🧟‍♀️"]
-        case .cars: emojiElementsShuffled =  ["🚗", "🚙" , "🚚", "🚛", "🚜", "🏎️", "🚔"]
-        case .animals: emojiElementsShuffled =  ["🐈", "🐫", "🐰", "🐇", "🐹", "🐻", "🐼", "🐨"]
-        case .sports: emojiElementsShuffled = ["⚽️", "🏀", "🏈", "⚾️", "🥎", "🎱", "🏓", "⛳️", "🏆", "🤼"]
-        case .flags: emojiElementsShuffled = ["🇦🇨", "🇦🇴", "🇦🇷", "🇦🇺", "🇧🇪", "🇨🇭", "🇭🇳", "🇩🇪", "🇸🇿", "🇪🇺", "🇬🇪", "🇷🇺"]
-        case .food: emojiElementsShuffled = ["🍗", "🥐", "🍞", "🥖", "🫓", "🥨", "🥯", "🥞", "🧇", "🧀", "🍖", "🍗"]
-        case .noone: emojiElementsShuffled =  []
+        case .halloween:
+            ["🎃", "👻", "🧛‍♂️", "👽", "🧟‍♀️"]
+        case .cars:
+            ["🚗", "🚙" , "🚚", "🚛", "🚜", "🏎️", "🚔"]
+        case .animals:
+            ["🐈", "🐫", "🐰", "🐇", "🐹", "🐻", "🐼", "🐨"]
+        case .sports:
+            ["⚽️", "🏀", "🏈", "⚾️", "🥎", "🎱", "🏓", "⛳️", "🏆", "🤼"]
+        case .flags:
+            ["🇦🇨", "🇦🇴", "🇦🇷", "🇦🇺", "🇧🇪", "🇨🇭", "🇭🇳", "🇩🇪", "🇸🇿", "🇪🇺", "🇬🇪", "🇷🇺"]
+        case .food:
+            ["🍗", "🥐", "🍞", "🥖", "🫓", "🥨", "🥯", "🥞", "🧇", "🧀", "🍖", "🍗"]
+        case .empty:
+            []
         }
-        return emojiElementsShuffled.shuffled()
     }
     // MARK: - Game Logic
     /// The number of emoji pairs to be used in the game for the selected theme.
     ///
     /// Some themes return all available emojis, while others (like `cars`, `sports`, or `flags`) return a random count.
+    
     var numberOfPair: Int {
         switch self {
-        case .halloween: return emojiElements.count
-        case .cars: return Int.random(in: 1...emojiElements.count)
-        case .animals: return emojiElements.count
-        case .sports: return Int.random(in: 1...emojiElements.count)
-        case .flags: return Int.random(in: 1...emojiElements.count)
-        case .food: return emojiElements.count
-        case .noone: return 0
+        case .animals, .halloween, .food:
+            return emojiElements.count
+        case .sports, .flags, .cars:
+            return Int.random(in: 1...emojiElements.count)
+        case .empty:
+            return 0
         }
     }
 }
+
 extension Array{
     var only: Element? {
          count == 1 ? first : nil

@@ -25,8 +25,11 @@ import SwiftUI
 /// - Notes:
 ///   - Card tap gestures trigger selection via `viewModel.choose(card)` and start the timer.
 ///   - Animations are applied smoothly when cards update.
+///
+
 struct EmojiMemoryGameView: View {
     @ObservedObject var viewModel: EmojiMemoryGame
+    
     var body: some View {
         HStack{
             Text("\(EmojiMemoryGame.randomTheme.description)")
@@ -38,19 +41,25 @@ struct EmojiMemoryGameView: View {
                     .animation(.smooth(duration: 0.5), value: viewModel.cards)
             }
             .foregroundColor(viewModel.themeColorCards(theme: EmojiMemoryGame.randomTheme))
+            
             Spacer()
+            
             Text(viewModel.formattedTime)
+            
             Text("Your current score is: \(viewModel.newScore)")
+            
             Spacer()
+            
             Button("New Game") {
                 viewModel.createNewGame()
                 viewModel.shuffle()
-                viewModel.resetTimer()
+                viewModel.resetTimerAndScore()
             }
         }
         .imageScale(.small)
         .padding()
     }
+    
     var cards: some View {
         return LazyVGrid(columns: [GridItem(.adaptive(minimum: 70), spacing: 0)], spacing: 0){
             ForEach(viewModel.cards) { card in
@@ -78,12 +87,14 @@ struct EmojiMemoryGameView: View {
 ///
 /// - Returns: A view that renders the card using a ZStack. The content is shown if the card is face up; otherwise, a filled background is shown.
 ///            If the card is matched and face down, it becomes fully transparent.
+
 struct CardView: View {
     let card: MemoryGame<String>.Card
     let base = RoundedRectangle(cornerRadius: 12)
     init(_ card: MemoryGame<String>.Card) {
         self.card = card
     }
+    
     var body: some View {
         ZStack(alignment: .center){
             Group{
@@ -100,6 +111,7 @@ struct CardView: View {
         .opacity(card.isFaceUp || !card.isMatched ? 1 : 0)
     }
 }
+
 #Preview {
     EmojiMemoryGameView(viewModel: EmojiMemoryGame())
 }
