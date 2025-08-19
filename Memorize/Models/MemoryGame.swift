@@ -138,20 +138,21 @@ enum Theme {
     var description: String {
         switch self {
         case .halloween: 
-            return "Your're playing: Halloween theme"
+             "Your're playing: Halloween theme"
         case .cars: 
-            return "Your're playing: Cars theme"
+             "Your're playing: Cars theme"
         case .animals: 
-            return "You're playing: Animals theme"
+             "You're playing: Animals theme"
         case .sports: 
-            return "You're playing: Sports theme"
+             "You're playing: Sports theme"
         case .flags: 
-            return "You're playing: Flags theme"
+             "You're playing: Flags theme"
         case .food: 
-            return "You're playing: Food theme"
+             "You're playing: Food theme"
         case .empty:
-            return "You're not playing a theme"
+             "You're not playing a theme"
         }
+        
     }
     // MARK: - Emoji Content
     /// A shuffled array of emoji strings associated with the theme.
