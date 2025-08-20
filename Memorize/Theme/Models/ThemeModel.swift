@@ -10,7 +10,7 @@ import Foundation
 struct ThemeModel {
     let id: UUID
     let displayName: String
-    let associatedColor: String
+    let associatedColor: ColorModel
     let description: String
     let emojiElements: [String]
     let isRandomized: Bool
@@ -27,7 +27,6 @@ struct ThemeModel {
     
     var amountOfCards: Int {
         let count = emojiElements.count
-        
         switch displayName.lowercased() {
         case "halloween", "animals", "food", "cars", "flags", "sports":
             return count * 2

@@ -26,7 +26,7 @@ struct GameView: View {
                 cards
                     .animation(.smooth(duration: 0.5), value: viewModel.cards)
             }
-            .foregroundColor(viewModel.themeColorCards())
+            .foregroundColor(viewModel.color(for: theme.id))
             Spacer()
             Text(viewModel.formattedTime)
             Text("Your current score is: \(viewModel.newScore)")

@@ -8,18 +8,27 @@
 import SwiftUI
 
 struct ThemeSelectionView: View {
-    @State private var isPopoverVisible = false
     @ObservedObject var viewModel: ThemeViewModel
-
+    @State private var selectedThemeId: UUID?
+    @State private var isPopoverVisible = false
+    
     var body: some View {
         NavigationStack {
             List {
                 ForEach(viewModel.themes, id: \.id) { themeModel in
-                    NavigationLink(destination: GameView(theme: themeModel, themeViewModel: viewModel)) {
+                    NavigationLink(
+                        destination: GameView(
+                            theme: themeModel,
+                            themeViewModel: viewModel
+                        )
+                    ) {
                         VStack(alignment: .leading) {
                             listContent(themeModel)
                         }
                         .padding()
+                        .contextMenu {
+                            themeContextMenu(for: themeModel)
+                        }
                     }
                 }
             }
@@ -32,6 +41,27 @@ struct ThemeSelectionView: View {
         }
     }
 
+    private func themeContextMenu(for themeModel: ThemeModel) -> some View {
+        VStack {
+            Button(action: {
+                selectedThemeId = themeModel.id
+                isPopoverVisible.toggle()
+                print("selectedThemeId en ThemeSelectionView: \(String(describing: selectedThemeId))")  // Verifica aquí
+            }) {
+                Text("Editar")
+                Image(systemName: "pencil")
+            }
+            
+            Button(action: {
+                viewModel.deleteTheme(themeModel.id)
+            }) {
+                Text("Eliminar")
+                Image(systemName: "trash")
+            }
+        }
+    }
+
+    
     var AddThemeButton: some View {
         Button {
             isPopoverVisible.toggle()
@@ -40,23 +70,24 @@ struct ThemeSelectionView: View {
             Image(systemName: "plus.square.fill.on.square.fill")
         }
         .popover(isPresented: $isPopoverVisible) {
-            NewThemeView(viewModel: viewModel, onAdd: { newThemeName in
-                let themeModel = viewModel.createTheme(named: newThemeName)
-                viewModel.addTheme(themeModel)
-                isPopoverVisible = false
-            })
+            if let themeId = selectedThemeId, let themeToEdit = viewModel.getThemeById(themeId) {
+                NewThemeView(viewModel: viewModel, themeId: $selectedThemeId)
+            } else {
+                NewThemeView(viewModel: viewModel, themeId: $selectedThemeId)
+            }
         }
     }
-
+    
     @ViewBuilder
     func listContent(_ theme: ThemeModel) -> some View {
         Text(theme.displayName)
             .font(.headline)
-            .foregroundColor(viewModel.mapColor(theme.associatedColor))
+            .foregroundColor(Colors().mapColor(theme.associatedColor))
         Text(theme.emojiElements.joined(separator: " "))
             .font(.body)
         Text("Max ammount of cards: \(theme.amountOfCards)")
             .font(.footnote)
+        
     }
 }
 

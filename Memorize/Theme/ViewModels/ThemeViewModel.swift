@@ -22,6 +22,16 @@ class ThemeViewModel: ObservableObject {
         ThemeCatalog.addTheme(theme)
         themes = ThemeCatalog.allThemes()
     }
+    
+    func updateTheme(_ theme: ThemeModel) {
+        if let index = themes.firstIndex(where: { $0.id == theme.id }) {
+            themes[index] = theme
+        }
+    }
+    
+    func getThemeById(_ id: UUID) -> ThemeModel? {
+        return themes.first { $0.id == id }
+    }
 
     func themeModel(for id: UUID) -> ThemeModel? {
         return ThemeCatalog.theme(for: id)
@@ -46,33 +56,17 @@ class ThemeViewModel: ObservableObject {
     func amountOfCards(for id: UUID) -> Int {
         return themeModel(for: id)?.amountOfCards ?? 0
     }
-
+    
     func color(for id: UUID) -> Color {
-        let colorName = themeModel(for: id)?.associatedColor ?? "black"
-        return mapColor(colorName)
+        guard let colorModel = themeModel(for: id)?.associatedColor else {
+            return .black
+        }
+        
+        return Colors().mapColor(colorModel)
     }
     
-    func mapColor(_ name: String) -> Color {
-        let map: [String: Color] = [
-            "halloween": .halloween,
-            "gray": .gray,
-            "animal": .animal,
-            "red": .red,
-            "blue": .blue,
-            "yellow": .yellow,
-            "black": .black,
-        ]
-        return map[name.lowercased(), default: .black]
-    }
-    
-    func createTheme(named name: String) -> ThemeModel {
-        return ThemeModel(
-            id: UUID(),
-            displayName: name.capitalized,
-            associatedColor: "gray",
-            description: "Tema personalizado",
-            emojiElements: [],
-            isRandomized: false
-        )
+    func deleteTheme(_ id: UUID) {
+        ThemeCatalog.removeTheme(with: id)
+        loadThemes()
     }
 }

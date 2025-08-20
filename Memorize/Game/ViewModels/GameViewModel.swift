@@ -35,21 +35,9 @@ class GameViewModel: ObservableObject {
         }
     }
     
-    func themeColorCards() -> Color {
-        return mapColor(themeModel.associatedColor)
-    }
-    
-    func mapColor(_ name: String) -> Color {
-        let map: [String: Color] = [
-            "halloween": .halloween,
-            "gray": .gray,
-            "animal": .animal,
-            "red": .red,
-            "blue": .blue,
-            "yellow": .yellow,
-            "black": .black
-        ]
-        return map[name.lowercased(), default: .black]
+    func color(for id: UUID) -> Color {
+        let colorModel = themeModel.associatedColor
+        return Colors().mapColor(colorModel)
     }
     
     func createNewGame() {

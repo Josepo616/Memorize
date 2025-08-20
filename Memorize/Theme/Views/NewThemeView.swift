@@ -15,52 +15,89 @@ struct NewThemeView: View {
     @State private var color: Color = .blue
     @State private var randomAmount: Bool = true
     private let emojiFont = Font.system(size: 20)
-    
-    var onAdd: (String) -> Void
-    
+
+    @Binding var themeId: UUID?
+
     enum Focused {
         case name, addEmoji
     }
-    
+
     @FocusState private var focused: Focused?
-    
+
     var body: some View {
         Form {
             Section(header: Text("Theme name")) {
                 TextField("Name", text: $title)
                     .focused($focused, equals: .name)
             }
-            
+
             Section(header: Text("Emojis content")) {
                 TextField("Add emojis here", text: $emojiContent)
                     .focused($focused, equals: .addEmoji)
                     .font(emojiFont)
             }
-            
+
             Section(header: Text("Theme Color")) {
                 ColorPicker("Choose a color", selection: $color)
             }
-            
+
             Section(header: Text("Randomization")) {
                 Toggle("Random amount of cards", isOn: $randomAmount)
             }
-            Button("Add Theme") {
-                let newThemeModel = ThemeModel(
-                    id: UUID(),
-                    displayName: title,
-                    associatedColor: color.description,
-                    description: "New theme added",
-                    emojiElements: emojiContent.filter { $0.isEmoji }.map { String($0) },
-                    isRandomized: randomAmount
-                )
-                viewModel.addTheme(newThemeModel)
+
+            Button(themeId == nil ? "Add Theme" : "Save Changes") {
+                if let rgb = color.getRGBComponents() {
+                    let newColorModel = ColorModel(
+                        red: Double(rgb.red),
+                        green: Double(rgb.green),
+                        blue: Double(rgb.blue),
+                        alpha: Double(rgb.alpha)
+                    )
+
+                    let newThemeModel = ThemeModel(
+                        id: themeId ?? UUID(),
+                        displayName: title,
+                        associatedColor: newColorModel,
+                        description: "New theme added",
+                        emojiElements: emojiContent.filter { $0.isEmoji }.map {
+                            String($0)
+                        },
+                        isRandomized: randomAmount
+                    )
+
+                    if let themeId = themeId {
+                        viewModel.updateTheme(newThemeModel)
+                    } else {
+                        viewModel.addTheme(newThemeModel)
+                    }
+                }
                 dismiss()
             }
             .disabled(title.isEmpty || emojiContent.isEmpty)
         }
+        .onAppear {
+            if let themeId = themeId {
+                if let existingTheme = viewModel.getThemeById(themeId) {
+                    title = existingTheme.displayName
+                    emojiContent = existingTheme.emojiElements.joined()
+                    color = Color.rgb(
+                        red: existingTheme.associatedColor.red,
+                        green: existingTheme.associatedColor.green,
+                        blue: existingTheme.associatedColor.blue,
+                        alpha: existingTheme.associatedColor.alpha
+                    )
+                    randomAmount = existingTheme.isRandomized
+                }
+            }
+        }
+        .onDisappear {
+            themeId = nil
+            print("closed and reset")
+        }
     }
 }
 
+/*
 #Preview {
-    NewThemeView(viewModel: ThemeViewModel(), onAdd: { newTheme in })
-}
+    NewThemeView(viewModel: ThemeViewModel())
+}*/
