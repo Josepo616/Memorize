@@ -114,18 +114,4 @@ struct ThemeCatalog {
     static func allThemes() -> [ThemeModel] {
         return Array(themesByUUID.values)
     }
-
-    static func addTheme(_ theme: ThemeModel) {
-        themesByUUID[theme.id] = theme
-    }
-
-    static func removeTheme(with id: UUID) {
-        let removedTheme = themesByUUID.removeValue(forKey: id)
-        if removedTheme != nil {
-            print("Tema con id \(id) eliminado.")
-        } else {
-            print("No se encontró un tema con el id \(id).")
-        }
-        print(theme(for: id) ?? "Tema eliminado correctamente.")
-    }
 }

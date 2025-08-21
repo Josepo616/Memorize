@@ -10,7 +10,6 @@ import SwiftUI
 struct ThemeSelectionView: View {
     @ObservedObject var viewModel: ThemeViewModel
     @State private var isPopoverVisible = false
-    
     var body: some View {
         NavigationStack {
             List {
@@ -82,7 +81,7 @@ struct ThemeSelectionView: View {
         Text(theme.displayName)
             .font(.headline)
             .foregroundColor(Colors().mapColor(theme.associatedColor))
-        Text(theme.emojiElements.joined(separator: " "))
+        Text(theme.emojiElements.prefix(10).joined(separator: " "))
             .font(.body)
         Text("Max ammount of cards: \(theme.amountOfCards)")
             .font(.footnote)

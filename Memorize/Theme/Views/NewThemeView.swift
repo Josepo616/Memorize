@@ -65,7 +65,7 @@ struct NewThemeView: View {
                         isRandomized: randomAmount
                     )
 
-                    if let themeId = themeId {
+                    if themeId != nil {
                         viewModel.updateTheme(newThemeModel)
                     } else {
                         viewModel.addTheme(newThemeModel)

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ColorModel {
+struct ColorModel: Codable {
     let red: Double
     let green: Double
     let blue: Double
