@@ -12,7 +12,7 @@ struct ThemeFormView: View {
     @Environment(\.dismiss) private var dismiss
     @FocusState private var focused: FoucusCases.FocusField?
     @State private var title: String = ""
-    @State private var emojiContent: String = ""
+    @State var emojiContent: String = ""
     @State private var color: Color = .blue
     @State private var randomAmount: Bool = true
     @State private var amountOfCards: Int = 2
@@ -39,7 +39,7 @@ struct ThemeFormView: View {
             RandomizationSection(randomAmount: $randomAmount)
             
             if !randomAmount {
-                AmountOfCardsToShow(amountOfCards: $amountOfCards)
+                AmountOfCardsToShow(amountOfCards: $amountOfCards, emojiContent: $emojiContent, viewModel: viewModel)
             }
 
             ActionButton(

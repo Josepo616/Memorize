@@ -22,7 +22,7 @@ struct ActionButton: View {
         Button(themeId == nil ? "Add Theme" : "Save Changes") {
             saveOrUpdateTheme()
         }
-        .disabled(title.isEmpty || emojiContent.count < 2)
+        .disabled(title.isEmpty || emojiContent.count < 2 || amountOfCards < 4)
     }
 
     private func saveOrUpdateTheme() {

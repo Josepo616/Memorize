@@ -117,7 +117,31 @@ class ThemeViewModel: ObservableObject {
         let emojisOnly = newValue.filter { $0.isEmoji }
         emojiContent = emojisOnly.isEmpty ? newValue : emojisOnly.getUniqueEmoji()
     }
+    
+    func validationForAmountOfCards(_ amountOfCards: inout Int, _ newValue: Int, _ emojiContent: String) {
+        let validString = String(newValue).filter { $0.isNumber }
 
+        if let validInt = Int(validString) {
+            let maxAmount = emojiContent.count * 2
+            
+            guard validInt >= 0 else {
+                amountOfCards = 0
+                return
+            }
+            
+            if validInt > maxAmount {
+                amountOfCards = maxAmount
+            } else {
+                amountOfCards = validInt
+            }
+        }
+    }
+
+
+
+
+
+    
     func loadExistingTheme(
         themeId: UUID?,
         title: Binding<String>,
@@ -139,7 +163,7 @@ class ThemeViewModel: ObservableObject {
             alpha: existingTheme.associatedColor.alpha
         )
         randomAmount.wrappedValue = existingTheme.isRandomized
-        amountOfCards.wrappedValue = existingTheme.amountOfCards ?? 0
+        amountOfCards.wrappedValue = existingTheme.amountOfCards ?? 4
     }
 
     func resetToInitialCatalog() {

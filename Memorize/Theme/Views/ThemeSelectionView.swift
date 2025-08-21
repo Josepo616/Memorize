@@ -70,7 +70,7 @@ struct ThemeSelectionView: View {
         }
         .popover(isPresented: $isPopoverVisible) {
             if let themeId = viewModel.selectedThemeId,
-                let themeToEdit = viewModel.getThemeById(themeId)
+                let _ = viewModel.getThemeById(themeId)
             {
                 ThemeFormView(
                     viewModel: viewModel,
