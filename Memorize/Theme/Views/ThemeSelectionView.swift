@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ThemeSelectionView: View {
     @ObservedObject var viewModel: ThemeViewModel
-    @State private var selectedThemeId: UUID?
     @State private var isPopoverVisible = false
     
     var body: some View {
@@ -44,18 +43,18 @@ struct ThemeSelectionView: View {
     private func themeContextMenu(for themeModel: ThemeModel) -> some View {
         VStack {
             Button(action: {
-                selectedThemeId = themeModel.id
+                viewModel.selectedThemeId = themeModel.id
                 isPopoverVisible.toggle()
-                print("selectedThemeId en ThemeSelectionView: \(String(describing: selectedThemeId))")  // Verifica aquí
+                print("selectedThemeId en ThemeSelectionView: \(String(describing: viewModel.selectedThemeId))")  // Verifica aquí
             }) {
-                Text("Editar")
+                Text("Edit")
                 Image(systemName: "pencil")
             }
             
             Button(action: {
                 viewModel.deleteTheme(themeModel.id)
             }) {
-                Text("Eliminar")
+                Text("Delete")
                 Image(systemName: "trash")
             }
         }
@@ -70,10 +69,10 @@ struct ThemeSelectionView: View {
             Image(systemName: "plus.square.fill.on.square.fill")
         }
         .popover(isPresented: $isPopoverVisible) {
-            if let themeId = selectedThemeId, let themeToEdit = viewModel.getThemeById(themeId) {
-                NewThemeView(viewModel: viewModel, themeId: $selectedThemeId)
+            if let themeId = viewModel.selectedThemeId, let themeToEdit = viewModel.getThemeById(themeId) {
+                NewThemeView(viewModel: viewModel, themeId: $viewModel.selectedThemeId)
             } else {
-                NewThemeView(viewModel: viewModel, themeId: $selectedThemeId)
+                NewThemeView(viewModel: viewModel, themeId: $viewModel.selectedThemeId)
             }
         }
     }

@@ -14,9 +14,6 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         get { return cards.indices.filter{index in cards[index].isFaceUp}.only }
         set { cards.indices.forEach { cards[$0].isFaceUp = (newValue == $0) } }
     }
-    // MARK: - Initialization
-    /// Creates a new memory game with a given number of card pairs and a content factory.
-    /// For each pair, two cards with identical content but unique IDs are created.
     
     init(numberOfPairOfCards: Int, cardContentFactory: (Int) -> CardContent){
         cards = []

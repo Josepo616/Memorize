@@ -9,8 +9,9 @@ import SwiftUI
 class GameViewModel: ObservableObject {
     @Published var formattedTime: String = "00:00"
     @Published private var model: MemoryGame<String>?
+    private var themeId: UUID
+    private unowned let themeViewModel: ThemeViewModel
     
-    private var themeModel: ThemeModel
     private var timer: Timer?
     private var elapsedSeconds = 0
     private var isGameStarted = false
@@ -22,26 +23,34 @@ class GameViewModel: ObservableObject {
     }
     
     init(themeViewModel: ThemeViewModel, themeID: UUID) {
-        guard let theme = themeViewModel.themeModel(for: themeID) else {
+        guard themeViewModel.themeModel(for: themeID) != nil else {
             fatalError("Theme with ID \(themeID) not found. Check your ThemeCatalog.")
         }
-        self.themeModel = theme
+        self.themeViewModel = themeViewModel
+        self.themeId = themeID
+        createNewGame()
+        
     }
-
-
+    
+    var theme: ThemeModel? {
+        themeViewModel.getThemeById(themeId)
+    }
+    
     static func createMemoryGame(with theme: ThemeModel) -> MemoryGame<String> {
         return MemoryGame(numberOfPairOfCards: theme.numberOfPair) { pairIndex in
             theme.emojiElements.indices.contains(pairIndex) ? theme.emojiElements[pairIndex] : "!?"
         }
     }
     
-    func color(for id: UUID) -> Color {
-        let colorModel = themeModel.associatedColor
-        return Colors().mapColor(colorModel)
+    func color() -> Color {
+        guard theme != nil else { return .black }        
+        return Colors().mapColor(theme!.associatedColor)
     }
     
     func createNewGame() {
-        self.model = GameViewModel.createMemoryGame(with: themeModel)
+        guard let themes = theme else { return }
+        
+        self.model = GameViewModel.createMemoryGame(with: themes)
         self.newScore = 0
         self.elapsedSeconds = 0
     }

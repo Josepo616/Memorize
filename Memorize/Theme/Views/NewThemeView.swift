@@ -78,6 +78,7 @@ struct NewThemeView: View {
         .onAppear {
             if let themeId = themeId {
                 if let existingTheme = viewModel.getThemeById(themeId) {
+                    print(existingTheme.associatedColor)
                     title = existingTheme.displayName
                     emojiContent = existingTheme.emojiElements.joined()
                     color = Color.rgb(
@@ -92,7 +93,6 @@ struct NewThemeView: View {
         }
         .onDisappear {
             themeId = nil
-            print("closed and reset")
         }
     }
 }

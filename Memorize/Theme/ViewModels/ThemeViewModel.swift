@@ -9,7 +9,8 @@ import SwiftUI
 
 class ThemeViewModel: ObservableObject {
     @Published var themes: [ThemeModel] = []
-    
+    @Published var selectedThemeId: UUID?
+
     init() {
         loadThemes()
     }

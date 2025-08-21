@@ -106,6 +106,8 @@ struct ThemeCatalog {
     ]
 
     static func theme(for id: UUID) -> ThemeModel? {
+        print(id)
+
         return themesByUUID[id]
     }
 
