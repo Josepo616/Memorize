@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct RandomizationSection: View {
+    
     @Binding var randomAmount: Bool
 
     var body: some View {

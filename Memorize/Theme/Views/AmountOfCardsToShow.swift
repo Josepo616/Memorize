@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AmountOfCardsToShow: View {
+    
     @Binding var amountOfCards: Int
     @Binding var emojiContent: String
     @ObservedObject var viewModel: ThemeViewModel

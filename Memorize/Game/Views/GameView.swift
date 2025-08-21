@@ -8,17 +8,16 @@
 import SwiftUI
 
 struct GameView: View {
+    
+    @StateObject private var viewModel: GameViewModel
     let theme: ThemeModel
     let themeViewModel: ThemeViewModel
-
-    @StateObject private var viewModel: GameViewModel
-
+    
     init(theme: ThemeModel, themeViewModel: ThemeViewModel) {
         self.theme = theme
         self.themeViewModel = themeViewModel
         _viewModel = StateObject(wrappedValue: GameViewModel(themeViewModel: themeViewModel, themeID: theme.id))
     }
-
 
     var body: some View {
         VStack {

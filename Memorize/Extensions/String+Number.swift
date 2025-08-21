@@ -8,6 +8,7 @@
 import Foundation
 
 extension String {
+    
     func onlyNumbers() -> String {
         return self.filter { $0.isNumber }
     }

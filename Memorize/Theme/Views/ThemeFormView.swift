@@ -8,15 +8,16 @@
 import SwiftUI
 
 struct ThemeFormView: View {
+    
     @ObservedObject var viewModel: ThemeViewModel
     @Environment(\.dismiss) private var dismiss
     @FocusState private var focused: FoucusCases.FocusField?
+    @Binding var themeId: UUID?
     @State private var title: String = ""
     @State var emojiContent: String = ""
     @State private var color: Color = .blue
     @State private var randomAmount: Bool = true
     @State private var amountOfCards: Int = 2
-    @Binding var themeId: UUID?
 
     var body: some View {
         Form {
@@ -43,13 +44,13 @@ struct ThemeFormView: View {
             }
 
             ActionButton(
+                viewModel: viewModel,
                 themeId: themeId,
                 title: title,
                 emojiContent: emojiContent,
                 color: color,
                 randomAmount: randomAmount,
-                amountOfCards: amountOfCards,
-                viewModel: viewModel
+                amountOfCards: amountOfCards
             )
         }
         .onAppear {

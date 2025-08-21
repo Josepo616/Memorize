@@ -8,9 +8,9 @@
 import SwiftUI
 
 class ThemeViewModel: ObservableObject {
+
     @Published var themes: [ThemeModel] = []
     @Published var selectedThemeId: UUID?
-
     private let storageKey = "theme_storage"
     private let initializedFlagKey = "hasInitializedThemes"
 
@@ -98,7 +98,7 @@ class ThemeViewModel: ObservableObject {
         guard let colorModel = themeModel(for: id)?.associatedColor else {
             return .black
         }
-
+        
         return Colors().mapColor(colorModel)
     }
 
@@ -115,20 +115,25 @@ class ThemeViewModel: ObservableObject {
     func validationForContent(_ emojiContent: inout String, _ newValue: String)
     {
         let emojisOnly = newValue.filter { $0.isEmoji }
-        emojiContent = emojisOnly.isEmpty ? newValue : emojisOnly.getUniqueEmoji()
+        emojiContent =
+            emojisOnly.isEmpty ? newValue : emojisOnly.getUniqueEmoji()
     }
-    
-    func validationForAmountOfCards(_ amountOfCards: inout Int, _ newValue: Int, _ emojiContent: String) {
+
+    func validationForAmountOfCards(
+        _ amountOfCards: inout Int,
+        _ newValue: Int,
+        _ emojiContent: String
+    ) {
         let validString = String(newValue).filter { $0.isNumber }
 
         if let validInt = Int(validString) {
             let maxAmount = emojiContent.count * 2
-            
+
             guard validInt >= 0 else {
                 amountOfCards = 0
                 return
             }
-            
+
             if validInt > maxAmount {
                 amountOfCards = maxAmount
             } else {
@@ -137,11 +142,6 @@ class ThemeViewModel: ObservableObject {
         }
     }
 
-
-
-
-
-    
     func loadExistingTheme(
         themeId: UUID?,
         title: Binding<String>,

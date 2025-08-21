@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct ActionButton: View {
+    
+    @Environment(\.dismiss) var dismiss
+    @ObservedObject var viewModel: ThemeViewModel
+
     var themeId: UUID?
     var title: String
     var emojiContent: String
@@ -15,14 +19,11 @@ struct ActionButton: View {
     var randomAmount: Bool
     var amountOfCards: Int
 
-    @Environment(\.dismiss) var dismiss
-    @ObservedObject var viewModel: ThemeViewModel
-
     var body: some View {
         Button(themeId == nil ? "Add Theme" : "Save Changes") {
             saveOrUpdateTheme()
         }
-        .disabled(title.isEmpty || emojiContent.count < 2 || amountOfCards < 4)
+        .disabled(title.isEmpty || emojiContent.count < 2 && (randomAmount ? true : amountOfCards < 4))
     }
 
     private func saveOrUpdateTheme() {

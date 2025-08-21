@@ -7,6 +7,7 @@
 import Foundation
 
 struct MemoryGame<CardContent> where CardContent: Equatable {
+    
     private(set) var cards: [GameModel<CardContent>]
     var newScore = 0
     var isGameOver = false
@@ -55,13 +56,5 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
     
     private mutating func updateEarnScore(isMatched: Bool, choosePreviousSeen: Bool, potencialChoosePreviousSeen: Bool) {
         self.newScore += isMatched ? 2 : (choosePreviousSeen || potencialChoosePreviousSeen ? -1 : 0)
-    }
-    
-    
-}
-
-extension Array{
-    var only: Element? {
-         count == 1 ? first : nil
     }
 }

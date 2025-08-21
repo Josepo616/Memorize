@@ -8,6 +8,7 @@
 import Foundation
 
 struct ThemeModel: Codable, Identifiable {
+    
     let id: UUID
     let displayName: String
     let associatedColor: ColorModel

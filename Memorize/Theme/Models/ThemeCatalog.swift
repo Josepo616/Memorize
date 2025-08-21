@@ -8,6 +8,7 @@
 import Foundation
 
 struct ThemeCatalog {
+    
     static let halloween = ThemeModel(
         id: UUID(),
         displayName: "Halloween",

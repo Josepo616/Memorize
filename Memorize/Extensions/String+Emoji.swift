@@ -8,6 +8,7 @@
 import Foundation
 
 extension String {
+    
     func getUniqueEmoji() -> String {
         var seenEmojis = Set<Character>()
         var result = ""

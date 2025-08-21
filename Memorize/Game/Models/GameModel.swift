@@ -8,9 +8,10 @@
 import Foundation
 
 struct GameModel<CardContent>: Equatable, Identifiable where CardContent: Equatable {
+    
+    let content: CardContent
     var isFaceUp = false
     var isMatched = false
     var previouslySeen = false
-    let content: CardContent
     var id: String
 }

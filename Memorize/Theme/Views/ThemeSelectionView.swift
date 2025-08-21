@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct ThemeSelectionView: View {
+    
     @ObservedObject var viewModel: ThemeViewModel
     @State private var isPopoverVisible = false
+    
     var body: some View {
         NavigationStack {
             List {
@@ -44,9 +46,6 @@ struct ThemeSelectionView: View {
             Button(action: {
                 viewModel.selectedThemeId = themeModel.id
                 isPopoverVisible.toggle()
-                print(
-                    "selectedThemeId en ThemeSelectionView: \(String(describing: viewModel.selectedThemeId))"
-                )  // Verifica aquí
             }) {
                 Text("Edit")
                 Image(systemName: "pencil")
@@ -95,7 +94,7 @@ struct ThemeSelectionView: View {
         Text(
             (theme.amountOfCards != nil)
                 ? "Max amount of cards: \(theme.amountOfCards!)"
-                : "You are using a random amount"
+                : "You are using a random amount of cards"
         )
         .font(.footnote)
 

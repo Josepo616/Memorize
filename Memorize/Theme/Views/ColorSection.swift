@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ColorSection: View {
+    
     @Binding var color: Color
 
     var body: some View {

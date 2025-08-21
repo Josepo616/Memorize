@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CardView: View {
+    
     let card: GameModel<String>
     let base = RoundedRectangle(cornerRadius: 12)
     init(_ card: GameModel<String>) {

@@ -8,6 +8,7 @@
 import Foundation
 
 struct FoucusCases {
+    
     enum FocusField {
         case name
         case emoji

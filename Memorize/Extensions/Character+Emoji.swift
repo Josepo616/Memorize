@@ -8,6 +8,7 @@
 import Foundation
 
 extension Character {
+    
     var isEmoji: Bool {
         guard let scalar = self.unicodeScalars.first else { return false }
         

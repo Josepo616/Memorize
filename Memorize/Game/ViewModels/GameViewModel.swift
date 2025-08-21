@@ -7,11 +7,11 @@
 import SwiftUI
 
 class GameViewModel: ObservableObject {
+    
     @Published var formattedTime: String = "00:00"
     @Published private var model: MemoryGame<String>?
-    private var themeId: UUID
     private unowned let themeViewModel: ThemeViewModel
-
+    private var themeId: UUID
     private var timer: Timer?
     private var elapsedSeconds = 0
     private var isGameStarted = false
@@ -52,7 +52,7 @@ class GameViewModel: ObservableObject {
 
     func createNewGame() {
         guard let themes = theme else { return }
-
+        
         self.model = GameViewModel.createMemoryGame(with: themes)
         self.newScore = 0
         self.elapsedSeconds = 0
@@ -61,9 +61,6 @@ class GameViewModel: ObservableObject {
     func shuffle() {
         model?.shuffle()
     }
-    // MARK: - Card Selection
-    /// Handles the logic when a card is selected by the user.
-    /// Updates the score, checks for game end, and interacts with the timer.
 
     func choose(_ card: GameModel<String>) {
         model?.choose(card)
@@ -73,9 +70,6 @@ class GameViewModel: ObservableObject {
             earnPoints()
         }
     }
-    // MARK: - Timer Management
-    /// Starts the game timer if not already running.
-    /// Increments `elapsedSeconds` every second and updates the formatted time string.
 
     func startTimer() {
         guard timer == nil else { return }
@@ -102,10 +96,7 @@ class GameViewModel: ObservableObject {
         formattedTime = "00:00"
         newScore = 0
     }
-    // MARK: - Scoring Logic
-    /// Adjusts the score based on how quickly the game was completed.
-    /// Rewards fast completion with more points and penalizes slower times.
-
+    
     func earnPoints() {
         switch elapsedSeconds {
         case 0..<10:
@@ -148,4 +139,5 @@ class GameViewModel: ObservableObject {
             break
         }
     }
+    
 }
