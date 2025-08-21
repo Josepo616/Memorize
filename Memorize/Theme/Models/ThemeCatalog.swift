@@ -19,7 +19,8 @@ struct ThemeCatalog {
         ),
         description: "You're playing: Halloween theme",
         emojiElements: ["🎃", "👻", "🧛‍♂️", "👽", "🧟‍♀️"],
-        isRandomized: false
+        isRandomized: false,
+        amountOfCardsChosen: 10
     )
 
     static let cars = ThemeModel(
@@ -33,7 +34,8 @@ struct ThemeCatalog {
         ),
         description: "You're playing: Cars theme",
         emojiElements: ["🚗", "🚙", "🚚", "🚛", "🚜", "🏎️", "🚔"],
-        isRandomized: false
+        isRandomized: false,
+        amountOfCardsChosen: 14
     )
 
     static let animals = ThemeModel(
@@ -47,7 +49,8 @@ struct ThemeCatalog {
         ),
         description: "You're playing: Animals theme",
         emojiElements: ["🐈", "🐫", "🐰", "🐇", "🐹", "🐻", "🐼", "🐨"],
-        isRandomized: false
+        isRandomized: false,
+        amountOfCardsChosen: 16
     )
 
     static let sports = ThemeModel(
@@ -61,7 +64,8 @@ struct ThemeCatalog {
         ),
         description: "You're playing: Sports theme",
         emojiElements: ["⚽️", "🏀", "🏈", "⚾️", "🥎", "🎱", "🏓", "⛳️", "🏆", "🤼"],
-        isRandomized: true
+        isRandomized: true,
+        amountOfCardsChosen: 20
     )
 
     static let flags = ThemeModel(
@@ -77,7 +81,8 @@ struct ThemeCatalog {
         emojiElements: [
             "🇦🇨", "🇦🇴", "🇦🇷", "🇦🇺", "🇧🇪", "🇨🇭", "🇭🇳", "🇩🇪", "🇸🇿", "🇪🇺", "🇬🇪", "🇷🇺",
         ],
-        isRandomized: true
+        isRandomized: true,
+        amountOfCardsChosen: 24
     )
 
     static let food = ThemeModel(
@@ -93,7 +98,8 @@ struct ThemeCatalog {
         emojiElements: [
             "🍗", "🥐", "🍞", "🥖", "🫓", "🥨", "🥯", "🥞", "🧇", "🧀", "🍖", "🍗",
         ],
-        isRandomized: true
+        isRandomized: true,
+        amountOfCardsChosen:24
     )
 
     static var themesByUUID: [UUID: ThemeModel] = [

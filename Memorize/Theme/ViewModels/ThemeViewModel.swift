@@ -10,7 +10,7 @@ import SwiftUI
 class ThemeViewModel: ObservableObject {
     @Published var themes: [ThemeModel] = []
     @Published var selectedThemeId: UUID?
-    
+
     private let storageKey = "theme_storage"
     private let initializedFlagKey = "hasInitializedThemes"
 
@@ -19,25 +19,29 @@ class ThemeViewModel: ObservableObject {
         //clearAllAndAllowReset()
         //resetToInitialCatalog()
     }
-    
+
     func loadThemes() {
         let defaults = UserDefaults.standard
-        
+
         if let data = defaults.data(forKey: storageKey),
-           let decoded = try? JSONDecoder().decode([ThemeModel].self, from: data) {
+            let decoded = try? JSONDecoder().decode(
+                [ThemeModel].self,
+                from: data
+            )
+        {
             self.themes = decoded
             return
         }
-        
+
         if !defaults.bool(forKey: initializedFlagKey) {
             self.themes = Array(ThemeCatalog.themesByUUID.values)
             saveThemes()
             defaults.set(true, forKey: initializedFlagKey)
-        } else{
+        } else {
             self.themes = []
         }
     }
-    
+
     func saveThemes() {
         if let encoded = try? JSONEncoder().encode(themes) {
             UserDefaults.standard.set(encoded, forKey: storageKey)
@@ -89,24 +93,62 @@ class ThemeViewModel: ObservableObject {
     func amountOfCards(for id: UUID) -> Int {
         return themeModel(for: id)?.amountOfCards ?? 0
     }
-    
+
     func color(for id: UUID) -> Color {
         guard let colorModel = themeModel(for: id)?.associatedColor else {
             return .black
         }
-        
+
         return Colors().mapColor(colorModel)
     }
-    
-    
-    
+
+    func isEmojiOnly(_ text: String) -> Bool {
+        let emojiRange = "[\\p{Emoji}]"
+        let regex = try! NSRegularExpression(pattern: emojiRange)
+        let matches = regex.matches(
+            in: text,
+            range: NSRange(text.startIndex..., in: text)
+        )
+        return matches.count == text.count
+    }
+
+    func validationForContent(_ emojiContent: inout String, _ newValue: String)
+    {
+        let emojisOnly = newValue.filter { $0.isEmoji }
+        emojiContent = emojisOnly.isEmpty ? newValue : emojisOnly.getUniqueEmoji()
+    }
+
+    func loadExistingTheme(
+        themeId: UUID?,
+        title: Binding<String>,
+        emojiContent: Binding<String>,
+        color: Binding<Color>,
+        randomAmount: Binding<Bool>,
+        amountOfCards: Binding<Int>
+    ) {
+        guard let themeId = themeId,
+            let existingTheme = getThemeById(themeId)
+        else { return }
+
+        title.wrappedValue = existingTheme.displayName
+        emojiContent.wrappedValue = existingTheme.emojiElements.joined()
+        color.wrappedValue = Color.rgb(
+            red: existingTheme.associatedColor.red,
+            green: existingTheme.associatedColor.green,
+            blue: existingTheme.associatedColor.blue,
+            alpha: existingTheme.associatedColor.alpha
+        )
+        randomAmount.wrappedValue = existingTheme.isRandomized
+        amountOfCards.wrappedValue = existingTheme.amountOfCards ?? 0
+    }
+
     func resetToInitialCatalog() {
         let defaults = UserDefaults.standard
         themes = Array(ThemeCatalog.themesByUUID.values)
         saveThemes()
         defaults.set(true, forKey: initializedFlagKey)
     }
-    
+
     func clearAllAndAllowReset() {
         themes = []
         saveThemes()

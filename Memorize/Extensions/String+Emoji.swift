@@ -2,17 +2,23 @@
 //  String+Emoji.swift
 //  Memorize
 //
-//  Created by JoseAlvarez on 8/20/25.
+//  Created by JoseAlvarez on 8/21/25.
 //
 
 import Foundation
 
-extension Character {
-    var isEmoji: Bool {
-        if let firstScalar = unicodeScalars.first, firstScalar.properties.isEmoji {
-            return firstScalar.value >= 0x238d || unicodeScalars.count > 1
-        } else {
-            return false
+extension String {
+    func getUniqueEmoji() -> String {
+        var seenEmojis = Set<Character>()
+        var result = ""
+        for character in self {
+            if character.isEmoji {
+                if !seenEmojis.contains(character) {
+                    seenEmojis.insert(character)
+                    result.append(character)
+                }
+            }
         }
+        return result
     }
 }

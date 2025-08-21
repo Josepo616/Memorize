@@ -44,12 +44,14 @@ struct ThemeSelectionView: View {
             Button(action: {
                 viewModel.selectedThemeId = themeModel.id
                 isPopoverVisible.toggle()
-                print("selectedThemeId en ThemeSelectionView: \(String(describing: viewModel.selectedThemeId))")  // Verifica aquí
+                print(
+                    "selectedThemeId en ThemeSelectionView: \(String(describing: viewModel.selectedThemeId))"
+                )  // Verifica aquí
             }) {
                 Text("Edit")
                 Image(systemName: "pencil")
             }
-            
+
             Button(action: {
                 viewModel.deleteTheme(themeModel.id)
             }) {
@@ -59,7 +61,6 @@ struct ThemeSelectionView: View {
         }
     }
 
-    
     var AddThemeButton: some View {
         Button {
             isPopoverVisible.toggle()
@@ -68,14 +69,22 @@ struct ThemeSelectionView: View {
             Image(systemName: "plus.square.fill.on.square.fill")
         }
         .popover(isPresented: $isPopoverVisible) {
-            if let themeId = viewModel.selectedThemeId, let themeToEdit = viewModel.getThemeById(themeId) {
-                NewThemeView(viewModel: viewModel, themeId: $viewModel.selectedThemeId)
+            if let themeId = viewModel.selectedThemeId,
+                let themeToEdit = viewModel.getThemeById(themeId)
+            {
+                ThemeFormView(
+                    viewModel: viewModel,
+                    themeId: $viewModel.selectedThemeId
+                )
             } else {
-                NewThemeView(viewModel: viewModel, themeId: $viewModel.selectedThemeId)
+                ThemeFormView(
+                    viewModel: viewModel,
+                    themeId: $viewModel.selectedThemeId
+                )
             }
         }
     }
-    
+
     @ViewBuilder
     func listContent(_ theme: ThemeModel) -> some View {
         Text(theme.displayName)
@@ -83,9 +92,13 @@ struct ThemeSelectionView: View {
             .foregroundColor(Colors().mapColor(theme.associatedColor))
         Text(theme.emojiElements.prefix(10).joined(separator: " "))
             .font(.body)
-        Text("Max ammount of cards: \(theme.amountOfCards)")
-            .font(.footnote)
-        
+        Text(
+            (theme.amountOfCards != nil)
+                ? "Max amount of cards: \(theme.amountOfCards!)"
+                : "You are using a random amount"
+        )
+        .font(.footnote)
+
     }
 }
 
