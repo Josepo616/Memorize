@@ -34,20 +34,8 @@ struct ActionButton: View {
     }
 
     private func saveOrUpdateTheme(_ recoverEmoji: Bool) {
-        var deletedEmojiElements: [String] = []
-
-        if let themeId = themeId {
-            let currentEmojiElements = viewModel.emojiElements(for: themeId)
-
-            let newEmojiElements = emojiContent.filter { $0.isEmoji }.map {
-                String($0)
-            }
-
-            deletedEmojiElements = currentEmojiElements.filter {
-                !newEmojiElements.contains($0)
-            }
-        }
-
+        let newEmojiElements = emojiContent.filter { $0.isEmoji }.map { String($0) }
+        
         if let rgb = color.getRGBComponents() {
             let newColorModel = ColorModel(
                 red: Double(rgb.red),
@@ -55,29 +43,31 @@ struct ActionButton: View {
                 blue: Double(rgb.blue),
                 alpha: Double(rgb.alpha)
             )
-
+            
             let newThemeModel = ThemeModel(
                 id: themeId ?? UUID(),
                 displayName: title,
                 associatedColor: newColorModel,
                 description: "New theme added",
-                emojiElements: emojiContent.filter { $0.isEmoji }.map {
-                    String($0)
-                },
-                emojiElementsDeleted: deletedEmojiElements,
+                emojiElements: newEmojiElements,
+                emojiElementsDeleted: [],
                 isRandomized: randomAmount,
                 amountOfCardsChosen: amountOfCards
             )
-
+            
             if themeId != nil {
                 viewModel.updateTheme(
                     newThemeModel,
-                    recoverEmoji
+                    recoverEmoji,
+                    newEmojiElements
+                    
                 )
             } else {
                 viewModel.addTheme(newThemeModel)
             }
+            
             dismiss()
         }
     }
 }
+

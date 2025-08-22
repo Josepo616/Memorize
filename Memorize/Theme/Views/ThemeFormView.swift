@@ -40,18 +40,7 @@ struct ThemeFormView: View {
             
             ColorSection(color: $color)
             RandomizationSection(randomAmount: $randomAmount, amountOfCards: $amountOfCards, emojiContent: $emojiContent, viewModel: viewModel)
-            
-            //if !randomAmount {
-              //  AmountOfCardsToShow( )
-            //}
-            
-            DeletedSection(showDeleted: $showDeleted)
-            
-            if showDeleted {
-                TextField("You don't have any emojis", text: $deletedEmojis)
-                    .disabled(true)
-                Toggle("Recover emojis", isOn: $recoverEmoji)
-            }
+            DeletedSection(showDeleted: $showDeleted, deletedEmojis: $deletedEmojis, recoverEmoji: $recoverEmoji)
             
             ActionButton(
                 viewModel: viewModel,

@@ -8,64 +8,80 @@
 import SwiftUI
 
 class ThemeViewModel: ObservableObject {
-
+    
     @Published var themes: [ThemeModel] = []
     @Published var selectedThemeId: UUID?
     private let storageKey = "theme_storage"
     private let initializedFlagKey = "hasInitializedThemes"
-
+    
     init() {
         loadThemes()
-        clearAllAndAllowReset()
-        resetToInitialCatalog()
+        //clearAllAndAllowReset()
+        //resetToInitialCatalog()
     }
-
+    
     func loadThemes() {
         let defaults = UserDefaults.standard
-
+        
         if let data = defaults.data(forKey: storageKey),
-            let decoded = try? JSONDecoder().decode(
-                [ThemeModel].self,
-                from: data
-            )
+           let decoded = try? JSONDecoder().decode(
+            [ThemeModel].self,
+            from: data
+           )
         {
             self.themes = decoded
             return
         }
-
+        
         if !defaults.bool(forKey: initializedFlagKey) {
-            self.themes = Array(ThemeCatalog.themesByUUID.values)
+            self.themes = Array(ThemeCatalog.themesByUUID.values).shuffled()
             saveThemes()
             defaults.set(true, forKey: initializedFlagKey)
         } else {
             self.themes = []
         }
     }
-
+    
     func saveThemes() {
         if let encoded = try? JSONEncoder().encode(themes) {
             UserDefaults.standard.set(encoded, forKey: storageKey)
         }
     }
-
+    
     func addTheme(_ theme: ThemeModel) {
         themes.append(theme)
         saveThemes()
     }
-
-    func updateTheme(_ theme: ThemeModel, _ showDeleted: Bool) {
+    
+    func updateTheme(_ theme: ThemeModel, _ recoverEmoji: Bool, _ newEmojiElements: [String]) {
         var updatedTheme = theme
-        
-        if showDeleted {
-            updatedTheme.emojiElements.append(contentsOf: updatedTheme.emojiElementsDeleted)
-            updatedTheme.emojiElementsDeleted.removeAll()
+
+        if let oldTheme = getThemeById(updatedTheme.id) {
+
+            if recoverEmoji {
+                updatedTheme.emojiElements = oldTheme.emojiElements + oldTheme.emojiElementsDeleted
+                updatedTheme.emojiElementsDeleted = []
+            } else {
+                if Set(oldTheme.emojiElements) != Set(newEmojiElements) {
+                    let deletedEmojiElements = oldTheme.emojiElements.filter { !newEmojiElements.contains($0) }
+                    updatedTheme.emojiElements = newEmojiElements
+                    updatedTheme.emojiElementsDeleted = deletedEmojiElements
+                } else {
+                    return
+                }
+            }
+        } else {
+            updatedTheme.emojiElements = newEmojiElements
+            updatedTheme.emojiElementsDeleted = []
         }
-        
+
         if let index = themes.firstIndex(where: { $0.id == updatedTheme.id }) {
             themes[index] = updatedTheme
             saveThemes()
         }
     }
+
+
 
 
     func deleteTheme(_ id: UUID) {
