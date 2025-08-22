@@ -15,9 +15,12 @@ struct ThemeFormView: View {
     @Binding var themeId: UUID?
     @State private var title: String = ""
     @State var emojiContent: String = ""
+    @State var deletedEmojis: String = ""
     @State private var color: Color = .blue
     @State private var randomAmount: Bool = true
     @State private var amountOfCards: Int = 2
+    @State private var showDeleted: Bool = false
+    @State private var recoverEmoji: Bool = false
 
     var body: some View {
         Form {
@@ -35,14 +38,21 @@ struct ThemeFormView: View {
                     }
             }
             
-
             ColorSection(color: $color)
-            RandomizationSection(randomAmount: $randomAmount)
+            RandomizationSection(randomAmount: $randomAmount, amountOfCards: $amountOfCards, emojiContent: $emojiContent, viewModel: viewModel)
             
-            if !randomAmount {
-                AmountOfCardsToShow(amountOfCards: $amountOfCards, emojiContent: $emojiContent, viewModel: viewModel)
+            //if !randomAmount {
+              //  AmountOfCardsToShow( )
+            //}
+            
+            DeletedSection(showDeleted: $showDeleted)
+            
+            if showDeleted {
+                TextField("You don't have any emojis", text: $deletedEmojis)
+                    .disabled(true)
+                Toggle("Recover emojis", isOn: $recoverEmoji)
             }
-
+            
             ActionButton(
                 viewModel: viewModel,
                 themeId: themeId,
@@ -50,7 +60,8 @@ struct ThemeFormView: View {
                 emojiContent: emojiContent,
                 color: color,
                 randomAmount: randomAmount,
-                amountOfCards: amountOfCards
+                amountOfCards: amountOfCards,
+                recoverEmoji: recoverEmoji
             )
         }
         .onAppear {
@@ -60,7 +71,8 @@ struct ThemeFormView: View {
                 emojiContent: $emojiContent,
                 color: $color,
                 randomAmount: $randomAmount,
-                amountOfCards: $amountOfCards
+                amountOfCards: $amountOfCards,
+                emojiDeleted: $deletedEmojis
             )
         }
         .onDisappear { themeId = nil }

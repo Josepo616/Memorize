@@ -20,6 +20,7 @@ struct ThemeCatalog {
         ),
         description: "You're playing: Halloween theme",
         emojiElements: ["🎃", "👻", "🧛‍♂️", "👽", "🧟‍♀️"],
+        emojiElementsDeleted: [""],
         isRandomized: false,
         amountOfCardsChosen: 10
     )
@@ -35,6 +36,7 @@ struct ThemeCatalog {
         ),
         description: "You're playing: Cars theme",
         emojiElements: ["🚗", "🚙", "🚚", "🚛", "🚜", "🏎️", "🚔"],
+        emojiElementsDeleted: [""],
         isRandomized: false,
         amountOfCardsChosen: 14
     )
@@ -50,6 +52,7 @@ struct ThemeCatalog {
         ),
         description: "You're playing: Animals theme",
         emojiElements: ["🐈", "🐫", "🐰", "🐇", "🐹", "🐻", "🐼", "🐨"],
+        emojiElementsDeleted: [""],
         isRandomized: false,
         amountOfCardsChosen: 16
     )
@@ -65,6 +68,7 @@ struct ThemeCatalog {
         ),
         description: "You're playing: Sports theme",
         emojiElements: ["⚽️", "🏀", "🏈", "⚾️", "🥎", "🎱", "🏓", "⛳️", "🏆", "🤼"],
+        emojiElementsDeleted: [""],
         isRandomized: true,
         amountOfCardsChosen: 20
     )
@@ -82,6 +86,7 @@ struct ThemeCatalog {
         emojiElements: [
             "🇦🇨", "🇦🇴", "🇦🇷", "🇦🇺", "🇧🇪", "🇨🇭", "🇭🇳", "🇩🇪", "🇸🇿", "🇪🇺", "🇬🇪", "🇷🇺",
         ],
+        emojiElementsDeleted: [""],
         isRandomized: true,
         amountOfCardsChosen: 24
     )
@@ -99,6 +104,7 @@ struct ThemeCatalog {
         emojiElements: [
             "🍗", "🥐", "🍞", "🥖", "🫓", "🥨", "🥯", "🥞", "🧇", "🧀", "🍖", "🍗",
         ],
+        emojiElementsDeleted: [""],
         isRandomized: true,
         amountOfCardsChosen:24
     )
@@ -113,8 +119,6 @@ struct ThemeCatalog {
     ]
 
     static func theme(for id: UUID) -> ThemeModel? {
-        print(id)
-
         return themesByUUID[id]
     }
 

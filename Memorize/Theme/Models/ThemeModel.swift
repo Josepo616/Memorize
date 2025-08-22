@@ -13,7 +13,8 @@ struct ThemeModel: Codable, Identifiable {
     let displayName: String
     let associatedColor: ColorModel
     let description: String
-    let emojiElements: [String]
+    var emojiElements: [String]
+    var emojiElementsDeleted: [String]
     let isRandomized: Bool
     let amountOfCardsChosen: Int
     

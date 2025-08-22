@@ -16,8 +16,8 @@ class ThemeViewModel: ObservableObject {
 
     init() {
         loadThemes()
-        //clearAllAndAllowReset()
-        //resetToInitialCatalog()
+        clearAllAndAllowReset()
+        resetToInitialCatalog()
     }
 
     func loadThemes() {
@@ -53,12 +53,20 @@ class ThemeViewModel: ObservableObject {
         saveThemes()
     }
 
-    func updateTheme(_ theme: ThemeModel) {
-        if let index = themes.firstIndex(where: { $0.id == theme.id }) {
-            themes[index] = theme
+    func updateTheme(_ theme: ThemeModel, _ showDeleted: Bool) {
+        var updatedTheme = theme
+        
+        if showDeleted {
+            updatedTheme.emojiElements.append(contentsOf: updatedTheme.emojiElementsDeleted)
+            updatedTheme.emojiElementsDeleted.removeAll()
+        }
+        
+        if let index = themes.firstIndex(where: { $0.id == updatedTheme.id }) {
+            themes[index] = updatedTheme
             saveThemes()
         }
     }
+
 
     func deleteTheme(_ id: UUID) {
         themes.removeAll { $0.id == id }
@@ -148,7 +156,8 @@ class ThemeViewModel: ObservableObject {
         emojiContent: Binding<String>,
         color: Binding<Color>,
         randomAmount: Binding<Bool>,
-        amountOfCards: Binding<Int>
+        amountOfCards: Binding<Int>,
+        emojiDeleted: Binding<String>
     ) {
         guard let themeId = themeId,
             let existingTheme = getThemeById(themeId)
@@ -164,6 +173,7 @@ class ThemeViewModel: ObservableObject {
         )
         randomAmount.wrappedValue = existingTheme.isRandomized
         amountOfCards.wrappedValue = existingTheme.amountOfCards ?? 4
+        emojiDeleted.wrappedValue = existingTheme.emojiElementsDeleted.joined()
     }
 
     func resetToInitialCatalog() {
