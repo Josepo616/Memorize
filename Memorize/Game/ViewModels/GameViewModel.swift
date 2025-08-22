@@ -52,7 +52,7 @@ class GameViewModel: ObservableObject {
 
     func createNewGame() {
         guard let themes = theme else { return }
-        
+        self.timer = nil
         self.model = GameViewModel.createMemoryGame(with: themes)
         self.newScore = 0
         self.elapsedSeconds = 0
@@ -87,7 +87,6 @@ class GameViewModel: ObservableObject {
 
     func pauseTimer() {
         timer?.invalidate()
-        timer = nil
     }
 
     func resetTimerAndScore() {
