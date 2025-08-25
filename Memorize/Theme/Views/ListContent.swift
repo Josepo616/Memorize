@@ -1,4 +1,12 @@
-// MARK: - List Content Abstraction
+//
+//  ListContent.swift
+//  Memorize
+//
+//  Created by JoseAlvarez on 8/22/25.
+//
+
+import SwiftUI
+
 struct ListContent: View {
     let theme: ThemeModel
     

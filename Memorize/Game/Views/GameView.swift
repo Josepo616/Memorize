@@ -21,6 +21,7 @@ struct GameView: View {
 
     var body: some View {
         VStack {
+            Text(viewModel.theme!.description)
             ScrollView {
                 cards
                     .animation(.smooth(duration: 0.5), value: viewModel.cards)

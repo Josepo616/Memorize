@@ -1,3 +1,12 @@
+//
+//  AddThemeButton.swift
+//  Memorize
+//
+//  Created by JoseAlvarez on 8/22/25.
+//
+
+import SwiftUI
+
 struct AddThemeButton: View {
     @ObservedObject var viewModel: ThemeViewModel
     @Binding var isPopoverVisible: Bool

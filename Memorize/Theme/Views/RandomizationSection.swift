@@ -10,7 +10,6 @@ import SwiftUI
 struct RandomizationSection: View {
     
     @Binding var randomAmount: Bool
-    
     @Binding var amountOfCards: Int
     @Binding var emojiContent: String
     @ObservedObject var viewModel: ThemeViewModel
@@ -31,7 +30,6 @@ struct RandomizationSection: View {
                         newValue,
                         emojiContent
                     )
-                    
                 }
             }
         }

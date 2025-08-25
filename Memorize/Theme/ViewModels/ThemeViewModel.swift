@@ -8,31 +8,31 @@
 import SwiftUI
 
 class ThemeViewModel: ObservableObject {
-    
+
     @Published var themes: [ThemeModel] = []
     @Published var selectedThemeId: UUID?
     private let storageKey = "theme_storage"
     private let initializedFlagKey = "hasInitializedThemes"
-    
+
     init() {
         loadThemes()
         //clearAllAndAllowReset()
         //resetToInitialCatalog()
     }
-    
+
     func loadThemes() {
         let defaults = UserDefaults.standard
-        
+
         if let data = defaults.data(forKey: storageKey),
-           let decoded = try? JSONDecoder().decode(
-            [ThemeModel].self,
-            from: data
-           )
+            let decoded = try? JSONDecoder().decode(
+                [ThemeModel].self,
+                from: data
+            )
         {
             self.themes = decoded
             return
         }
-        
+
         if !defaults.bool(forKey: initializedFlagKey) {
             self.themes = Array(ThemeCatalog.themesByUUID.values).shuffled()
             saveThemes()
@@ -41,55 +41,71 @@ class ThemeViewModel: ObservableObject {
             self.themes = []
         }
     }
-    
+
     func saveThemes() {
         if let encoded = try? JSONEncoder().encode(themes) {
             UserDefaults.standard.set(encoded, forKey: storageKey)
         }
     }
-    
+
+    // MARK: - CRUD
     func addTheme(_ theme: ThemeModel) {
         themes.append(theme)
         saveThemes()
     }
-    
-    func updateTheme(_ theme: ThemeModel, _ recoverEmoji: Bool, _ newEmojiElements: [String]) {
+
+    func updateTheme(
+        _ theme: ThemeModel,
+        _ recoverEmoji: Bool,
+        _ newEmojiElements: [String]
+    ) {
         var updatedTheme = theme
+        var shouldUpdateAllFields = false
 
         if let oldTheme = getThemeById(updatedTheme.id) {
 
             if recoverEmoji {
                 updatedTheme.emojiElements = oldTheme.emojiElements + oldTheme.emojiElementsDeleted
                 updatedTheme.emojiElementsDeleted = []
-            } else {
-                if Set(oldTheme.emojiElements) != Set(newEmojiElements) {
-                    let deletedEmojiElements = oldTheme.emojiElements.filter { !newEmojiElements.contains($0) }
+            } else if Set(oldTheme.emojiElements) != Set(newEmojiElements) {
+                let deletedEmojiElements = oldTheme.emojiElements.filter {
+                    shouldUpdateAllFields = true
+
+                    return !newEmojiElements.contains($0)
+                }
+                if deletedEmojiElements.isEmpty {
+                    updatedTheme.emojiElementsDeleted = oldTheme.emojiElementsDeleted
+                } else {
                     updatedTheme.emojiElements = newEmojiElements
                     updatedTheme.emojiElementsDeleted = deletedEmojiElements
-                } else {
-                    return
                 }
             }
-        } else {
-            updatedTheme.emojiElements = newEmojiElements
-            updatedTheme.emojiElementsDeleted = []
         }
 
         if let index = themes.firstIndex(where: { $0.id == updatedTheme.id }) {
-            themes[index] = updatedTheme
+            if shouldUpdateAllFields {
+                themes[index] = updatedTheme
+                print(updatedTheme.emojiElementsDeleted)
+            } else {
+                themes[index].emojiElements = updatedTheme.emojiElements
+                themes[index].associatedColor = updatedTheme.associatedColor
+                themes[index].displayName = updatedTheme.displayName
+                themes[index].isRandomized = updatedTheme.isRandomized
+                themes[index].description = updatedTheme.description
+                themes[index].amountOfCardsChosen = updatedTheme.amountOfCardsChosen
+                
+            }
             saveThemes()
         }
     }
-
-
-
 
     func deleteTheme(_ id: UUID) {
         themes.removeAll { $0.id == id }
         saveThemes()
         loadThemes()
     }
-
+    
+    // MARK: - Getters
     func getThemeById(_ id: UUID) -> ThemeModel? {
         return themes.first { $0.id == id }
     }
@@ -117,15 +133,8 @@ class ThemeViewModel: ObservableObject {
     func amountOfCards(for id: UUID) -> Int {
         return themeModel(for: id)?.amountOfCards ?? 0
     }
-
-    func color(for id: UUID) -> Color {
-        guard let colorModel = themeModel(for: id)?.associatedColor else {
-            return .black
-        }
-        
-        return Colors().mapColor(colorModel)
-    }
-
+    
+    // MARK: - Validations
     func isEmojiOnly(_ text: String) -> Bool {
         let emojiRange = "[\\p{Emoji}]"
         let regex = try! NSRegularExpression(pattern: emojiRange)
@@ -166,6 +175,15 @@ class ThemeViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Interactions with view
+    func color(for id: UUID) -> Color {
+        guard let colorModel = themeModel(for: id)?.associatedColor else {
+            return .black
+        }
+
+        return Colors().mapColor(colorModel)
+    }
+
     func loadExistingTheme(
         themeId: UUID?,
         title: Binding<String>,
@@ -192,6 +210,7 @@ class ThemeViewModel: ObservableObject {
         emojiDeleted.wrappedValue = existingTheme.emojiElementsDeleted.joined()
     }
 
+    // MARK: - Reset the persistence
     func resetToInitialCatalog() {
         let defaults = UserDefaults.standard
         themes = Array(ThemeCatalog.themesByUUID.values)

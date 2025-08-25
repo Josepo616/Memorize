@@ -23,11 +23,15 @@ struct ThemeSelectionView: View {
                         )
                     ) {
                         VStack(alignment: .leading) {
-                            listContent(themeModel)
+                            ListContent(theme: themeModel)
                         }
                         .padding()
                         .contextMenu {
-                            themeContextMenu(for: themeModel)
+                            ThemeContextMenu(
+                                viewModel: viewModel,
+                                themeModel: themeModel,
+                                isPopoverVisible: $isPopoverVisible
+                            )
                         }
                     }
                 }
@@ -35,69 +39,13 @@ struct ThemeSelectionView: View {
             .navigationTitle("Select a Theme")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    AddThemeButton
+                    AddThemeButton(
+                        viewModel: viewModel,
+                        isPopoverVisible: $isPopoverVisible
+                    )
                 }
             }
         }
-    }
-
-    private func themeContextMenu(for themeModel: ThemeModel) -> some View {
-        VStack {
-            Button(action: {
-                viewModel.selectedThemeId = themeModel.id
-                isPopoverVisible.toggle()
-            }) {
-                Text("Edit")
-                Image(systemName: "pencil")
-            }
-
-            Button(action: {
-                viewModel.deleteTheme(themeModel.id)
-            }) {
-                Text("Delete")
-                Image(systemName: "trash")
-            }
-        }
-    }
-
-    var AddThemeButton: some View {
-        Button {
-            isPopoverVisible.toggle()
-        } label: {
-            Text("Add Theme")
-            Image(systemName: "plus.square.fill.on.square.fill")
-        }
-        .popover(isPresented: $isPopoverVisible) {
-            if let themeId = viewModel.selectedThemeId,
-                let _ = viewModel.getThemeById(themeId)
-            {
-                ThemeFormView(
-                    viewModel: viewModel,
-                    themeId: $viewModel.selectedThemeId
-                )
-            } else {
-                ThemeFormView(
-                    viewModel: viewModel,
-                    themeId: $viewModel.selectedThemeId
-                )
-            }
-        }
-    }
-
-    @ViewBuilder
-    func listContent(_ theme: ThemeModel) -> some View {
-        Text(theme.displayName)
-            .font(.headline)
-            .foregroundColor(Colors().mapColor(theme.associatedColor))
-        Text(theme.emojiElements.prefix(10).joined(separator: " "))
-            .font(.body)
-        Text(
-            (theme.amountOfCards != nil)
-                ? "Max amount of cards: \(theme.amountOfCards!)"
-                : "You are using a random amount of cards"
-        )
-        .font(.footnote)
-
     }
 }
 

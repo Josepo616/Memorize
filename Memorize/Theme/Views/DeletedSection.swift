@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DeletedSection: View {
+    
     @Binding var showDeleted: Bool
     @Binding var deletedEmojis: String
     @Binding var recoverEmoji: Bool

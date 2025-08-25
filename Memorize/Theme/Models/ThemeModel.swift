@@ -10,13 +10,13 @@ import Foundation
 struct ThemeModel: Codable, Identifiable {
     
     let id: UUID
-    let displayName: String
-    let associatedColor: ColorModel
-    let description: String
+    var displayName: String
+    var associatedColor: ColorModel
+    var description: String
     var emojiElements: [String]
     var emojiElementsDeleted: [String]
-    let isRandomized: Bool
-    let amountOfCardsChosen: Int
+    var isRandomized: Bool
+    var amountOfCardsChosen: Int
     
     var numberOfPair: Int {
         let count = emojiElements.count

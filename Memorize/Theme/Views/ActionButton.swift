@@ -48,7 +48,7 @@ struct ActionButton: View {
                 id: themeId ?? UUID(),
                 displayName: title,
                 associatedColor: newColorModel,
-                description: "New theme added",
+                description: "You're playing " + title + "'s theme",
                 emojiElements: newEmojiElements,
                 emojiElementsDeleted: [],
                 isRandomized: randomAmount,
@@ -70,4 +70,3 @@ struct ActionButton: View {
         }
     }
 }
-

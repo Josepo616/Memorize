@@ -1,3 +1,12 @@
+//
+//  ThemeContextMenu.swift
+//  Memorize
+//
+//  Created by JoseAlvarez on 8/22/25.
+//
+
+import SwiftUI
+
 // MARK: - Context Menu Abstraction
 struct ThemeContextMenu: View {
     @ObservedObject var viewModel: ThemeViewModel
