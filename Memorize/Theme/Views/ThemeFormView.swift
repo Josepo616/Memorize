@@ -67,8 +67,3 @@ struct ThemeFormView: View {
         .onDisappear { themeId = nil }
     }
 }
-
-/*
-#Preview {
-    NewThemeView(viewModel: ThemeViewModel())
-}*/

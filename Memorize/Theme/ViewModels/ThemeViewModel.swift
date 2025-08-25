@@ -16,8 +16,6 @@ class ThemeViewModel: ObservableObject {
 
     init() {
         loadThemes()
-        //clearAllAndAllowReset()
-        //resetToInitialCatalog()
     }
 
     func loadThemes() {
