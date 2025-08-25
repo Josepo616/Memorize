@@ -7,9 +7,9 @@
 
 import Foundation
 
-extension Array{
-    
+extension Array {
+
     var only: Element? {
-         count == 1 ? first : nil
+        count == 1 ? first : nil
     }
 }
