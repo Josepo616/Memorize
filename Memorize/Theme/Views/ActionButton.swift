@@ -37,7 +37,7 @@ struct ActionButton: View {
         let newEmojiElements = emojiContent.filter { $0.isEmoji }.map { String($0) }
         
         if let rgb = color.getRGBComponents() {
-            let newColorModel = ColorModel(
+            let newColorModel = RGBAColor(
                 red: Double(rgb.red),
                 green: Double(rgb.green),
                 blue: Double(rgb.blue),

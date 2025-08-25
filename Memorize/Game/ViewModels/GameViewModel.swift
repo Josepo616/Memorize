@@ -46,8 +46,7 @@ class GameViewModel: ObservableObject {
     }
 
     func color() -> Color {
-        guard theme != nil else { return .black }
-        return Colors().mapColor(theme!.associatedColor)
+        return theme?.associatedColor.swiftUIColor ?? .black
     }
 
     func createNewGame() {
@@ -138,5 +137,4 @@ class GameViewModel: ObservableObject {
             break
         }
     }
-    
 }

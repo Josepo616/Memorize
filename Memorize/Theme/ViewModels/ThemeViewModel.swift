@@ -175,11 +175,7 @@ class ThemeViewModel: ObservableObject {
 
     // MARK: - Interactions with view
     func color(for id: UUID) -> Color {
-        guard let colorModel = themeModel(for: id)?.associatedColor else {
-            return .black
-        }
-
-        return Colors().mapColor(colorModel)
+        return themeModel(for: id)?.associatedColor.swiftUIColor ?? .black
     }
 
     func loadExistingTheme(

@@ -12,7 +12,7 @@ struct ThemeCatalog {
     static let halloween = ThemeModel(
         id: UUID(),
         displayName: "Halloween",
-        associatedColor: ColorModel(
+        associatedColor: RGBAColor(
             red: 1.000,
             green: 0.208,
             blue: 0.000,
@@ -28,7 +28,7 @@ struct ThemeCatalog {
     static let cars = ThemeModel(
         id: UUID(),
         displayName: "Cars",
-        associatedColor: ColorModel(
+        associatedColor: RGBAColor(
             red: 0.557,
             green: 0.557,
             blue: 0.576,
@@ -44,7 +44,7 @@ struct ThemeCatalog {
     static let animals = ThemeModel(
         id: UUID(),
         displayName: "Animals",
-        associatedColor: ColorModel(
+        associatedColor: RGBAColor(
             red: 0.802,
             green: 0.344,
             blue: 0.202,
@@ -60,7 +60,7 @@ struct ThemeCatalog {
     static let sports = ThemeModel(
         id: UUID(),
         displayName: "Sports",
-        associatedColor: ColorModel(
+        associatedColor: RGBAColor(
             red: 1.000,
             green: 0.231,
             blue: 0.188,
@@ -76,7 +76,7 @@ struct ThemeCatalog {
     static let flags = ThemeModel(
         id: UUID(),
         displayName: "Flags",
-        associatedColor: ColorModel(
+        associatedColor: RGBAColor(
             red: 0.000,
             green: 0.478,
             blue: 1.000,
@@ -94,7 +94,7 @@ struct ThemeCatalog {
     static let food = ThemeModel(
         id: UUID(),
         displayName: "Food",
-        associatedColor: ColorModel(
+        associatedColor: RGBAColor(
             red: 1.000,
             green: 0.800,
             blue: 0.000,

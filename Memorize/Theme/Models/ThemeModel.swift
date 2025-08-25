@@ -11,7 +11,7 @@ struct ThemeModel: Codable, Identifiable {
     
     let id: UUID
     var displayName: String
-    var associatedColor: ColorModel
+    var associatedColor: RGBAColor
     var description: String
     var emojiElements: [String]
     var emojiElementsDeleted: [String]
